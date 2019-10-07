@@ -32,9 +32,10 @@ const parseJsonToDOM = (json) => {
 const getContributions = (html) => {
   const contribs = html
   .then(res => {
-    return getCommits(res);
+    let temp = [];
+    temp.push(getCommits(res));
+    temp.push(getIssues(res));
   });
-  //console.log(contribs);
   return contribs;
 }
 
@@ -43,11 +44,22 @@ const getCommits = (html) => {
   const activities = html.getElementsByClassName("event-item");
   let commits = [];
   Array.from(activities).forEach(a => {
-    //console.log(a.innerHTML);
     if(a.innerHTML.includes("pushed to branch")){
       commits.push(a);
     }
   });
-  console.log(commits);
   return commits;
+}
+
+// Get all Issues from DOM Object
+const getIssues = (html) => {
+  const activities = html.getElementsByClassName("event-item");
+  let issues = [];
+  Array.from(activities).forEach(a => {
+    if(a.innerHTML.includes("opened")){
+      issues.push(a);
+    }
+  });
+  console.log(issues);
+  return issues;
 }
