@@ -1,5 +1,5 @@
 export const get = (server, username) => {
-  parseJsonToDOM(fetchJson(server, username));
+  getContributions(parseJsonToDOM(fetchJson(server, username)));
 };
 
 // Fetch Activities from GitLab in JSON format
@@ -25,5 +25,29 @@ const parseJsonToDOM = (json) => {
   .then(res => {
     return parser.parseFromString(res.html, "text/html");
   });
-  console.log(html);
+  return html;
+}
+
+// Get all Contributions from DOM Object
+const getContributions = (html) => {
+  const contribs = html
+  .then(res => {
+    return getCommits(res);
+  });
+  //console.log(contribs);
+  return contribs;
+}
+
+// Get all Commits from DOM Object
+const getCommits = (html) => {
+  const activities = html.getElementsByClassName("event-item");
+  let commits = [];
+  Array.from(activities).forEach(a => {
+    //console.log(a.innerHTML);
+    if(a.innerHTML.includes("pushed to branch")){
+      commits.push(a);
+    }
+  });
+  console.log(commits);
+  return commits;
 }
