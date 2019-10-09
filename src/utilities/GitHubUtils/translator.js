@@ -23,6 +23,30 @@ export function getTranslatorObj(objUser) {
     platform.status.emojiHTML = "null";
   }
 
+  /** platform.organizations.(?) */
+  objUser.profile.organizations.edges.forEach(_org => {
+
+    var org = [];
+
+    org.members = [];
+    org.avatarUrl = _org.node.avatarUrl;
+    org.name = _org.node.name;
+    org.orgUrl = _org.node.url;
+
+    /** platform.organizations.member.(?) */
+    _org.node.membersWithRole.nodes.forEach(_member => {
+      var member = [];
+
+      member.avatarUrl = _member.avatarUrl;
+      member.name = _member.name;
+      member.username = null;
+      member.webUrl = _member.url;
+
+      org.members.push(member);
+    });
+    platform.organizations.push(org);
+  });
+
   return platform;
 }
 
