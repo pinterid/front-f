@@ -1,0 +1,39 @@
+{
+  "stats": {
+    "commits": {
+      "total": "",
+      "reposCount": ""
+    },
+    "issues": {
+      "total": "",
+      "reposCount": ""
+    },
+    "pullRequests": {
+      "total": "",
+      "reposCount": ""
+    },
+    "codeReviews": {
+      "total": "",
+      "reposCount": ""
+    },
+    "busiestDay": {
+      "date": "",
+      "count": ""
+    },
+    "average": "",
+    "streak": {
+      "currentStreak": {
+        "startDate": "",
+        "endDate": "",
+        "total": ""
+      },
+      "longestStreak": {
+        "startDate": "",
+        "endDate": "",
+        "total": ""
+      },
+      "history": []
+    }
+  },
+  "calendar": {}
+}

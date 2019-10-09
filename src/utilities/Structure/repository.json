@@ -1,0 +1,22 @@
+{
+  "avatarUrl": "",
+  "name": "",
+  "repoUrl": "",
+  "owner": {
+    "avatarUrl": "",
+    "name": "",
+    "username": "",
+    "webUrl": ""
+  },
+  "members": [],
+  "languagesPie": {
+    "size": "",
+    "count": "",
+    "edges": [],
+    "slice": {
+      "size": "",
+      "count": "",
+      "edges": []
+    }
+  }
+}
