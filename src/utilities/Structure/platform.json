@@ -1,0 +1,20 @@
+{
+  "platformName": "",
+  "platformUrl": "",
+  "avatarUrl": "",
+  "websiteUrl": "",
+  "company": "",
+  "email": "",
+  "name": "",
+  "createdAt": "",
+  "location": "",
+  "status": {
+    "message": "",
+    "emojiHTML": ""
+  },
+  "organizations": [],
+  "repos": [],
+  "contributions": {
+    "years": []
+  }
+}
