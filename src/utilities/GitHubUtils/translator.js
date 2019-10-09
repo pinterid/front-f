@@ -47,6 +47,48 @@ export function getTranslatorObj(objUser) {
     platform.organizations.push(org);
   });
 
+  // Generate platform.contribution.(?) and platform.repos.(?)
+  Object.values(objUser.calendar).forEach(_c => {
+
+    // Filters all calendars from the query
+    if (_c.__typename == "ContributionsCollection") {
+      
+      var year = [];
+
+      // Calculation of the total codeRevies
+      var codeReviewsCount = 0;
+
+      /** platform.contribution.years.stars.(?) */
+      var stats = new Object();
+      stats.commits = new Object();
+      stats.issues = new Object();
+      stats.pullRequests = new Object();
+      stats.codeReviews = new Object();
+
+      stats.commits.total = 0;
+      stats.issues.total = 0;
+      stats.pullRequests.total = 0;
+      stats.codeReviews.total = 0;
+
+      stats.streak = new Object();
+      stats.streak.history = [];
+      stats.streak.currentStreak = new Object();
+      stats.streak.longestStreak = new Object();
+      stats.streak.currentStreak.startDate = undefined;
+      stats.streak.currentStreak.endDate = undefined;
+      stats.streak.currentStreak.total = undefined;
+      stats.streak.longestStreak.startDate = undefined;
+      stats.streak.longestStreak.endDate = undefined;
+      stats.streak.longestStreak.total = undefined;
+
+      year.stats = stats;
+
+      platform.contributions.years.push(year);
+    }
+
+
+  });
+
   return platform;
 }
 
