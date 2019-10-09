@@ -1,4 +1,4 @@
-// Builds a object from github user
+// Builds a object from GitHub user
 import * as connect from "./connectgql";
 
 export function get(username) {

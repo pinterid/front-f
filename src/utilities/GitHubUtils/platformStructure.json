@@ -1,0 +1,171 @@
+{
+    "platformName": "GitHub",
+    "platformUrl": "https://github.com",
+    "avatarUrl": "",
+    "websiteUrl": "",
+    "company": "",
+    "email": "",
+    "name": "",
+    "createdAt": "",
+    "location": "",
+    "status": {
+      "message": "",
+      "emojiHTML": ""
+    },
+    "organizations": [
+        {
+            "avatarUrl": "",
+            "name": "",
+            "orgUrl": "",
+            "members": [
+              {
+                "avatarUrl": "",
+                "name": "",
+                "username": "",
+                "webUrl": ""
+              }
+            ]
+          }
+    ],
+    "repos": [
+      {
+        "avatarUrl": "",
+        "name": "",
+        "repoUrl": "",
+        "owner": {
+          "avatarUrl": "",
+          "name": "",
+          "username": "",
+          "webUrl": ""
+        },
+        "members": [
+          {
+            "avatarUrl": "None",
+            "name": "None",
+            "username": "None",
+            "webUrl": "None"
+          }
+        ],
+        "languagesPie": {
+          "size": "",
+          "count": "",
+          "edges": [
+            {
+              "name": "",
+              "size": "",
+              "color": ""
+            }
+          ],
+          "slice": {
+            "size": "",
+            "count": "",
+            "edges": [
+              {
+                "name": "",
+                "size": "",
+                "color": ""
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "contributions": {
+      "years": [
+        {
+          "stats": {
+            "commits": {
+              "total": "",
+              "reposCount": ""
+            },
+            "issues": {
+              "total": "",
+              "reposCount": ""
+            },
+            "pullRequests": {
+              "total": "",
+              "reposCount": ""
+            },
+            "codeReviews": {
+              "total": "",
+              "reposCount": ""
+            },
+            "busiestDay": "",
+            "average": "",
+            "streak": {
+              "currentStreak": {
+                "startDate": "",
+                "endDate": "",
+                "total": ""
+              },
+              "longestStreak": {
+                "startDate": "",
+                "endDate": "",
+                "total": ""
+              },
+              "history": [
+                {
+                  "startDate": "",
+                  "endDate": "",
+                  "total": ""
+                }
+              ]
+            }
+          },
+          "calendar": {
+            "20-10-2001": 
+              {
+                "date": "",
+                "total": "",
+                "color": "",
+                "contributions:": {
+                  "commits": [
+                    {
+                      "organisationName": "",
+                      "repoUrl": "",
+                      "languages": {
+                        "size": "",
+                        "count": "",
+                        "edges": [
+                          {
+                            "name": "",
+                            "size": "",
+                            "color": ""
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "codeReviews": [
+                    {
+                      "filesCount": "",
+                      "discussionCount": "",
+                      "url": ""
+                    }
+                  ],
+                  "pullRequests": [
+                    {
+                      "discussionCount": "",
+                      "commitCount": ""
+                    }
+                  ],
+                  "issues": [
+                    {
+                      "conversationCount": "",
+                      "labels": [
+                        {
+                          "name": "",
+                          "description": "",
+                          "color": ""
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            
+          }
+        }
+      ]
+    }
+  }
