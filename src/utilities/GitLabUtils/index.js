@@ -1,16 +1,18 @@
 // Import JSON structure
-import { structure, organizations, members} from "./objects";
+import { structure, organizations, members, pullRequests} from "./objects";
 let data = structure;
 
 //get Json data file
 export const get = (server, username) => {
   data.platformUrl = server;
   // getContributions(server, username);
-  return getOrganizations(server, username)
+  getOrganizations(server, username)
   .then(res => {
     data.organizations = res;
     return data;
   });
+  const contribs = getContributions(server, username)
+  return data;
 };
 
 // Fetch JSON from url
@@ -112,3 +114,62 @@ const parseTextToDOM = (json) => {
   });
   return html;
 }
+
+const getContributions = (server, username) => {
+  const limit = "2147483647";
+
+  const url = `https://${server}/${username}?limit=${limit}`
+  const html = parseJsonToDOM(fetchJson(url));
+  console.log(html);
+  let commits = [];
+    let issues = [];
+    let pullRequests = [];
+  const contribs = html
+  .then(res => {
+    console.log(res)
+    let commits = getCommits(res);
+    let issues = getIssues(res);
+    let pullRequests = getPullRequests(res);
+    console.log(commits);
+    console.log(issues);
+    console.log(pullRequests);
+    //issues.push(getIssues(res));
+  });
+  return {"commits": commits, "issues": issues, "pullRequests": pullRequests};
+}
+
+// Get all Commits from DOM Object
+const getCommits = (html) => {
+  const activities = html.getElementsByClassName("event-item");
+  let commits = [];
+  Array.from(activities).forEach(a => {
+    if(a.innerHTML.includes("pushed to branch")){
+      commits.push(a);
+    }
+  });
+  return commits;
+}
+
+// Get all Issues from DOM Object
+const getIssues = (html) => {
+  const activities = html.getElementsByClassName("event-item");
+  let issues = [];
+  Array.from(activities).forEach(a => {
+    if(a.innerHTML.includes("opened")){
+      issues.push(a);
+    }
+  });
+  return issues;
+}
+
+// Get all Pull Requests from DOM Object
+const getPullRequests = (html) => {
+  const activities = html.getElementsByClassName("event-item");
+  let pullRequests = [];
+  Array.from(activities).forEach(a => {
+    if(a.innerHTML.includes("Merge branch")){
+      pullRequests.push(a);
+    }
+  });
+  return pullRequests;
+} 
