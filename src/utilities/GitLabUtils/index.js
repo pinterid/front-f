@@ -120,20 +120,14 @@ const getContributions = (server, username) => {
 
   const url = `https://${server}/${username}?limit=${limit}`
   const html = parseJsonToDOM(fetchJson(url));
-  console.log(html);
   let commits = [];
     let issues = [];
     let pullRequests = [];
   const contribs = html
   .then(res => {
-    console.log(res)
     let commits = getCommits(res);
     let issues = getIssues(res);
     let pullRequests = getPullRequests(res);
-    console.log(commits);
-    console.log(issues);
-    console.log(pullRequests);
-    //issues.push(getIssues(res));
   });
   return {"commits": commits, "issues": issues, "pullRequests": pullRequests};
 }
