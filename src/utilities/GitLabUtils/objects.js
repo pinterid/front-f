@@ -1,6 +1,6 @@
 export const structure = {
-  "platformName": "GitHub",
-  "platformUrl": "https://github.com",
+  "platformName": "GitLab",
+  "platformUrl": "https://gitlab.com",
   "avatarUrl": "",
   "websiteUrl": "",
   "company": "",
@@ -119,30 +119,18 @@ export const calendarEntry = {
   }
 }
 
-export const commits = {
-  "organisationName": "",
+export const contribution = {
+  "time": "",
+  "nameWithOwner": "",
   "repoUrl": "",
+  "additions": "",
+  "deletions": "",
+  "changedFiles": "",
   "languages": {
     "size": "",
     "count": "",
     "edges": []
   }
-}
-
-export const codeReviews = {
-  "filesCount": "",
-  "discussionCount": "",
-  "url": ""
-}
-
-export const pullRequests = {
-  "discussionCount": "",
-  "commitCount": ""
-}
-
-export const issues = {
-  "conversationCount": "",
-  "labels": []
 }
 
 export const labels = {
