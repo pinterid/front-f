@@ -1,5 +1,5 @@
 // Import JSON structure
-import { structure, organizations, members, pullRequests} from "./objects";
+import { structure, organizations, members, contribution} from "./objects";
 let data = structure;
 
 //get Json data file
@@ -12,6 +12,7 @@ export const get = (server, username) => {
     return data;
   });
   const contribs = getContributions(server, username)
+  console.log(contribs)
   return data;
 };
 
@@ -128,8 +129,31 @@ const getContributions = (server, username) => {
     let commits = getCommits(res);
     let issues = getIssues(res);
     let pullRequests = getPullRequests(res);
+
+    //console.log(commits)
   });
+  //console.log(contribs)
   return {"commits": commits, "issues": issues, "pullRequests": pullRequests};
+}
+
+// Convert HTML formatted event-items to contributions
+
+const convertToContributions = (items) => {
+  let contributions = {}
+  let contrib = null;
+
+  items.forEach(element => {
+    contrib = Object.assign({}, contribution);
+    var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
+    var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
+
+    contrib.time = time.split("T")[1]
+    contrib.nameWithOwner = nameWithOwner
+    contrib.repoUrl = `${data.platformUrl}${nameWithOwner}`
+
+    contributions[time.split("T")[0]] = contrib
+  });
+  return contributions
 }
 
 // Get all Commits from DOM Object
@@ -141,6 +165,7 @@ const getCommits = (html) => {
       commits.push(a);
     }
   });
+  console.log(convertToContributions(commits))
   return commits;
 }
 
@@ -153,6 +178,7 @@ const getIssues = (html) => {
       issues.push(a);
     }
   });
+  console.log(convertToContributions(issues))
   return issues;
 }
 
@@ -165,5 +191,6 @@ const getPullRequests = (html) => {
       pullRequests.push(a);
     }
   });
+  console.log(convertToContributions(pullRequests))
   return pullRequests;
 } 
