@@ -62,7 +62,7 @@ export const edges = {
   "color": ""
 }
 
-export const years = {
+export const yearEntry = {
   "stats": {
     "commits": {
       "total": "",
@@ -80,7 +80,10 @@ export const years = {
       "total": "",
       "reposCount": ""
     },
-    "busiestDay": "",
+    "busiestDay": {
+      "date": "",
+      "count": ""
+    },
     "average": "",
     "streak": {
       "currentStreak": {
@@ -96,9 +99,7 @@ export const years = {
       "history": []
     }
   },
-  "calendar": {
-    "20-10-2001": []
-  }
+  "calendar": {}
 }
 
 export const history = {
@@ -108,10 +109,11 @@ export const history = {
 }
 
 export const calendarEntry = {
-  "date": "",
+  "week": "",
+  "weekday": "",
   "total": "",
   "color": "",
-  "contributions:": {
+  "contributions": {
     "commits": [],
     "codeReviews": [],
     "pullRequests": [],
