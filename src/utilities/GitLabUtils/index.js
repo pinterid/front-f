@@ -200,9 +200,6 @@ export const get = (server, username) => {
         repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
         repo.name = nameWithOwner
       
-        //let owner = await getMember(nameWithOwner)
-      
-        //repo.owner = owner
         repo.members = await getMembers(`${repo.name}/-/project_members`)
         //console.log(repo.members)
         return repo
@@ -294,14 +291,25 @@ export const get = (server, username) => {
             cEntry.week = new Date(key).getWeekNumber()
             cEntry.weekday = new Date(key).getDay()
             //console.log(key, contributionGroup)
-  
+            
+            let repos = []
             for (let [cKey, contribution] of Object.entries(contributionGroup)){
               cEntry.contributions[`${type}`].push(contribution);
               cEntry.total++;
+              year.stats[`${type}`].total++;
+              repos.push(contribution.repoUrl)
             }
+
+            year.stats[`${type}`].reposCount = [...new Set(repos)].length;
+
+            // Sum up total values
+            year.stats.average += cEntry.total;
+
             //console.log(cEntry)
             year.calendar[key] = cEntry;
           }
+          // Calculate average per year
+          year.stats.average /= 365;
         }
 
         fill(contributionsPerYear(commits), 'commits');
