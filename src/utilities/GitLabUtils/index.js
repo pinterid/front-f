@@ -1,6 +1,6 @@
 
 // Import JSON structure
-import { structure, organizations, members, contribution, repos, calendarEntry, yearEntry} from "./objects";
+import { structure, organizations, members, contribution, repos, calendarEntry, yearEntry} from "./Objects";
 let data = structure;
 
 //> Helper functions
