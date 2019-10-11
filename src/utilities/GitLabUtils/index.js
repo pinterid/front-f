@@ -1,8 +1,6 @@
 
 // Import JSON structure
 import { structure, organizations, members, contribution, repos, calendarEntry, yearEntry} from "./objects";
-// Import clonedeep
-var cloneDeep = require("lodash.clonedeep")
 let data = structure;
 
 //> Helper functions
@@ -43,7 +41,7 @@ var keyMatch = function(o,r){
 const getMember = async (username) => {
   const url = `https://${data.platformUrl}/${username}`
   return await parseTextToDOM(fetchHtml(url)).then(html => {
-    let member = cloneDeep(members)
+    let member = {...members}
     const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
     const name = html.getElementsByClassName("cover-title")[0].innerHTML;
 
@@ -176,7 +174,7 @@ export const get = async (server, username) => {
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)){
-          let org = cloneDeep(organizations)
+          let org = {...organizations}
           
           const avatarUrl = _org.getElementsByClassName("avatar")[0].getAttribute("data-src");
           const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
@@ -198,7 +196,7 @@ export const get = async (server, username) => {
       //> Repositories
       // Get a repository from a given
       const getRepositoryFromName = async (nameWithOwner) => {
-        let repo = cloneDeep(repos)
+        let repo = {...repos}
         repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`
         repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
         repo.name = nameWithOwner
@@ -213,7 +211,7 @@ export const get = async (server, username) => {
       const convertToContributions = async (items) => {
         let contributions = {}
         for(const element of items){
-          let contrib = cloneDeep(contribution);
+          let contrib = {...contribution};
           var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
           var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
           contrib.time = time.split("T")[1]
@@ -278,14 +276,14 @@ export const get = async (server, username) => {
       let today = new Date();
       
       for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
-        let year = cloneDeep(yearEntry);
+        let year = {...yearEntry};
         year.stats.streak.currentStreak = "2001-01-01";
         var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
         let fill = (contributionsPerYear, type) => {
           for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
             let cEntry = null
             if (!year.calendar[key]){
-              cEntry = cloneDeep(calendarEntry);
+              cEntry = {...calendarEntry};
             }else{
               cEntry = year.calendar[key];
             }
