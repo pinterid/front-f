@@ -75,10 +75,10 @@ const getOrganizations = (username) => {
       const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
 
       if (avatarUrl){
-        org.avatarUrl = `https://${data.platformUrl}/${avatarUrl.split("/")[1]}`
+        org.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`
       }
-      org.name = `${name.split("/")[1]}`
-      org.orgUrl = `https://${data.platformUrl}/${name.split("/")[1]}`
+      org.name = `${name.substring(1)}`
+      org.orgUrl = `https://${data.platformUrl}/${name.substring(1)}`
       orgs.push(org)
       //console.log(org)
     })
@@ -139,7 +139,7 @@ const getMember = (username) => {
 
     member.name = name
     member.username = username
-    member.avatarUrl = `https:/${avatarUrl}`;
+    member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
     member.webUrl = `https://${data.platformUrl}/${username}`
 
   });
@@ -155,7 +155,7 @@ const getMembers = (path) => {
  
     Array.from(elements).forEach(element => {
       let username = element.getElementsByClassName("user-info")[0].querySelector("span.cgray").innerHTML;
-      username = username.split("@")[1];
+      username = username.substring(1);
       users.push(getMember(username))
     });
   });
@@ -164,8 +164,8 @@ const getMembers = (path) => {
 
 const getRepositoryFromName = (nameWithOwner) => {
   let repo = Object.assign({}, repos);
-  repo.repoUrl = `https://${data.platformUrl}${nameWithOwner}`
-  repo.avatarUrl = `https://${data.platformUrl}${nameWithOwner}/-/avatar`
+  repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`
+  repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
   repo.name = nameWithOwner
 
   let owner = getMember(nameWithOwner.split("/")[1])
@@ -207,8 +207,8 @@ const convertToContributions = (items) => {
     var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
 
     contrib.time = time.split("T")[1]
-    contrib.nameWithOwner = nameWithOwner
-    contrib.repoUrl = `${data.platformUrl}${nameWithOwner}`
+    contrib.nameWithOwner = nameWithOwner.substring(1)
+    contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
 
     contributions[time.split("T")[0]] = contrib
 
