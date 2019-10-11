@@ -79,34 +79,13 @@ const getOrganizations = (username) => {
       }
       org.name = `${name.substring(1)}`
       org.orgUrl = `https://${data.platformUrl}/${name.substring(1)}`
+      org.members = getMembers(`${org.name}/-/group_members`)
       orgs.push(org)
       //console.log(org)
     })
     //console.log(html)
   })
   return orgs
-}
-// Get all Group Members from Group
-const getGroupMembers = (name, server) => {
-  
-  const url = `https://${server}/groups${name}/-/group_members`;
-  return parseTextToDOM(fetchHtml(url))
-  .then(res => {
-    const raw = res.getElementsByClassName("list-item-name");
-    let temp = [];
-    Array.from(raw).forEach(item => {
-      let membersObj = JSON.parse(JSON.stringify(members));
-      const img = item.getElementsByClassName("avatar").item(0);
-      const userLink = item.getElementsByClassName("member").item(0);
-      const userSpan = userLink.nextElementSibling
-      membersObj.avatarUrl = img.dataset.src;
-      membersObj.name = userLink.innerHTML;
-      membersObj.username = userSpan.innerHTML.substring(1);
-      membersObj.webUrl = userLink.pathname;
-      temp.push(membersObj);
-    });
-    return temp;
-  });
 }
 
 // Parse Json to DOM Object
