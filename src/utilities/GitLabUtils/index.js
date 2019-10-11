@@ -296,8 +296,9 @@ export const get = (server, username) => {
             for (let [cKey, contribution] of Object.entries(contributionGroup)){
               cEntry.contributions[`${type}`].push(contribution);
               cEntry.total++;
-              year.stats[`${type}`].total++;
               repos.push(contribution.repoUrl)
+
+              year.stats[`${type}`].total++;
             }
 
             year.stats[`${type}`].reposCount = [...new Set(repos)].length;
@@ -305,11 +306,20 @@ export const get = (server, username) => {
             // Sum up total values
             year.stats.average += cEntry.total;
 
-            //console.log(cEntry)
             year.calendar[key] = cEntry;
+
+            // Calculate busiest day
+            if(year.calendar[key].total > year.stats.busiestDay.count){
+              year.stats.busiestDay.count = year.calendar[key].total;
+              year.stats.busiestDay.date = key
+            }
+            
           }
           // Calculate average per year
           year.stats.average /= 365;
+
+          // Calculate busiest day
+
         }
 
         fill(contributionsPerYear(commits), 'commits');
