@@ -41,7 +41,9 @@ export const githubProvider: IProvider<boolean> = {
             state = stateMatch[1]
         }
 
-        const AuthorizeUrl = `https://c-hive-proxy.herokuapp.com/https://github.com/login/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&code=${code}&redirect_uri=${redirect_uri}&state=${state}`
+        const AuthorizeUrl = `https://c-hive-proxy.herokuapp.com/https://github.com/login/oauth/access_token?code=${code}
+        &client_secret=${client_secret}&client_id=${client_id}&redirect_uri=${redirect_uri}&state=${state}`
+        
         fetch(AuthorizeUrl, {
             method: "POST",
             headers: {
