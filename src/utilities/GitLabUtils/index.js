@@ -6,11 +6,13 @@ let data = structure;
 export const get = (server, username) => {
   data.platformUrl = server;
   // getContributions(server, username);
-  getOrganizations(server, username)
+  data.organizations = getOrganizations(username);
+  /*
   .then(res => {
     data.organizations = res;
     return data;
   });
+  */
   const contribs = getContributions(server, username)
   return data;
 };
@@ -59,36 +61,34 @@ function pushWithoutElem(array, elem) {
 }
 
 // Get all Organizations a user is in
-const getOrganizations = (server, username) => {
+const getOrganizations = (username) => {
 
-  const url = `https://${server}/users/${username}/groups.json`;
-  return parseJsonToDOM(fetchJson(url))
-  .then(res => {
-    const raw = res.getElementsByClassName("group-row");
-    let temp = [];
-    Array.from(raw).forEach(org => {
-      let orgObj = JSON.parse(JSON.stringify(organizations));
-      if(org.innerHTML.includes("<img")){
-        const img = org.getElementsByClassName("avatar").item(0);
-        orgObj.avatarUrl = img.dataset.src;
-      }
-      const groupNameLink = org.getElementsByClassName("group-name").item(0);
-
-      orgObj.name = groupNameLink.innerHTML;
-      orgObj.orgUrl = groupNameLink.pathname;
-      getGroupMembers(orgObj.orgUrl, server)
-      .then(res => {
-        orgObj.members = res;
-      });
-      console.log(orgObj)
-      temp.push(orgObj);
-    });
+  const url = `https://${data.platformUrl}/users/${username}/groups.json`;
+  let orgs = []
+  parseJsonToDOM(fetchJson(url)).then(html => {
     
-    return temp;
-  });
+    let org = null
+    const rows = html.getElementsByClassName("group-row");
+    Array.from(rows).forEach(_org => {
+      org = Object.assign({}, organizations)
+      const avatarUrl = _org.getElementsByClassName("avatar")[0].getAttribute("data-src");
+      const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
+
+      if (avatarUrl){
+        org.avatarUrl = `https://${data.platformUrl}/${avatarUrl.split("/")[1]}`
+      }
+      org.name = `${name.split("/")[1]}`
+      org.orgUrl = `https://${data.platformUrl}/${name.split("/")[1]}`
+      orgs.push(org)
+      //console.log(org)
+    })
+    //console.log(html)
+  })
+  return orgs
 }
 // Get all Group Members from Group
 const getGroupMembers = (name, server) => {
+  
   const url = `https://${server}/groups${name}/-/group_members`;
   return parseTextToDOM(fetchHtml(url))
   .then(res => {
