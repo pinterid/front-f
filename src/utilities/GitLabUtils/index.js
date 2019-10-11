@@ -60,9 +60,8 @@ function pushWithoutElem(array, elem) {
 
 // Get all Organizations a user is in
 const getOrganizations = (server, username) => {
-  const limit = "2147483647";
 
-  const url = `https://${server}/users/${username}/groups.json?limit=${limit}`;
+  const url = `https://${server}/users/${username}/groups.json`;
   return parseJsonToDOM(fetchJson(url))
   .then(res => {
     const raw = res.getElementsByClassName("group-row");
