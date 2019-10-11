@@ -149,6 +149,20 @@ const getProjectMembers = (project) => {
   return users
 }
 
+const getRepositoryFromName = (nameWithOwner) => {
+  let repo = Object.assign({}, repos);
+  repo.repoUrl = `https://${data.platformUrl}${nameWithOwner}`
+  repo.avatarUrl = `https://${data.platformUrl}${nameWithOwner}/-/avatar`
+  repo.name = nameWithOwner
+
+  let owner = getMember(nameWithOwner.split("/")[1])
+
+  repo.owner = owner
+  repo.members = getProjectMembers(repo.name)
+  //console.log(repo.members)
+  return repo
+}
+
 const getContributions = (server, username) => {
   const limit = "2147483647";
 
@@ -185,6 +199,10 @@ const convertToContributions = (items) => {
     contrib.repoUrl = `${data.platformUrl}${nameWithOwner}`
 
     contributions[time.split("T")[0]] = contrib
+
+    let repo = getRepositoryFromName(nameWithOwner)
+    data.repos.push(repo)
+    //console.log(data.repos)
   });
   return contributions
 }
