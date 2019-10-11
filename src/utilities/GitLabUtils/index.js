@@ -2,51 +2,7 @@
 import { structure, organizations, members, contribution, repos} from "./objects";
 let data = structure;
 
-//get Json data file
-export const get = (server, username) => {
-  data.platformUrl = server;
-  data.organizations = getOrganizations(username);
-  getProfile(username)
-  /*
-  .then(res => {
-    data.organizations = res;
-    return data;
-  });
-  */
-  const contribs = getContributions(server, username)
-  return data;
-};
-
-// Fetch JSON from url
-const fetchJson = (urlIn) => {
-  const proxy = "https://c-hive-proxy.herokuapp.com/";
-  
-  const url = `${proxy}${urlIn}`;
-  return fetch(url, {
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "X-Requested-With": "XMLHttpRequest"
-    }
-  })
-  .then(async res => await res.json())
-  .then(res => {return res})
-}
-
-// Fetch HTML from url
-const fetchHtml = (urlIn) => {
-  const proxy = "https://c-hive-proxy.herokuapp.com/";
-  
-  const url = `${proxy}${urlIn}`;
-  return fetch(url, {
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      //"X-Requested-With": "XMLHttpRequest"
-    }
-  })
-  .then(async res => await res.text())
-  .then(res => {return res})
-}
-
+//> Helper functions
 // Push element to a list without allowing duplicates
 function pushWithoutElem(array, elem) {
   array.forEach( e => {
@@ -59,7 +15,6 @@ function pushWithoutElem(array, elem) {
   })
   array.push(elem)
 }
-
 // Returns an object containing only those objects whose key matched the regex
 var keyMatch = function(o,r){
   var no = {};
@@ -71,75 +26,47 @@ var keyMatch = function(o,r){
   return no
 };
 
-// Get profile of a user
-const getProfile = (username) => {
-  var profile = {}
-  const url = `https://${data.platformUrl}/${username}`;
-  parseTextToDOM(fetchHtml(url)).then(html => {
-    console.log(html)
-    const status = html.getElementsByTagName("gl-emoji")[0];
-    const cover =  html.getElementsByClassName("cover-desc")[0].getElementsByTagName("span");
+
+//> Member functions
+// Get a member object by username
+const getMember = async (username) => {
+  var member = null;
+  
+  const url = `https://${data.platformUrl}/${username}`
+  return await parseTextToDOM(fetchHtml(url)).then(html => {
+    member = Object.assign({}, members);
     const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
-    const links = html.getElementsByClassName("profile-link-holder")
-    const message = null;
-    const emojiHTML = null;
-    const username = cover[0].innerHTML.trim().substring(1);
-    const date = cover[1].innerHTML;
+    const name = html.getElementsByClassName("cover-title")[0].innerHTML;
 
-    if(links[0]){
-      profile.websiteUrl = links[0].getElementsByTagName("a")[0].getAttribute("href").split(":")[1];
-    }
-    if(links[2]){
-      profile.email = links[2].getElementsByTagName("a")[0].getAttribute("href");
-    }
-    if(links[3]){
-      profile.location = links[3].innerText.trim();
-    }
-    if(links[4]){
-      profile.company = links[4].innerText.trim();
-    }
-    if(status){
-      profile.message = status.innerHTML;
-      profile.emojiHTML = status.outerHTML;
-    }
+    member.name = name
+    member.username = username
+    member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
+    member.webUrl = `https://${data.platformUrl}/${username}`
 
-    profile.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
-
-    profile.username = username;
-    profile.createdAt = new Date(date);
-
-    console.log(profile)
+    return member
   });
-  return profile
+}
+// Get a list of members of a gitlab memberlist
+const getMembers = async (path) => {
+  const url = `https://${data.platformUrl}/${path}`
+  //console.log(url)
+  let users = []
+    return parseTextToDOM(fetchHtml(url)).then(async html => {
+      const elements = html.getElementsByClassName("user-info")
+      Array.from(elements).forEach(async element => {
+        let username =  element.getElementsByTagName("a")[0].getAttribute('href').substring(1);
+        //console.log(username)
+        //console.log(getMember(username))
+        let member = await getMember(username)
+        //console.log(member)
+        users.push(member)
+        //console.log(users)
+      })
+      return users
+    });
 }
 
-// Get all Organizations a user is in
-const getOrganizations = (username) => {
-  const url = `https://${data.platformUrl}/users/${username}/groups.json`;
-  let orgs = []
-  parseJsonToDOM(fetchJson(url)).then(html => {
-    
-    let org = null
-    const rows = html.getElementsByClassName("group-row");
-    Array.from(rows).forEach(_org => {
-      org = Object.assign({}, organizations)
-      const avatarUrl = _org.getElementsByClassName("avatar")[0].getAttribute("data-src");
-      const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
-
-      if (avatarUrl){
-        org.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`
-      }
-      org.name = `${name.substring(1)}`
-      org.orgUrl = `https://${data.platformUrl}/${name.substring(1)}`
-      org.members = getMembers(`${org.name}/-/group_members`)
-      orgs.push(org)
-      //console.log(org)
-    })
-    //console.log(html)
-  })
-  return orgs
-}
-
+//> Parser functions
 // Parse Json to DOM Object
 const parseJsonToDOM = (json) => {
   const parser = new DOMParser()
@@ -149,7 +76,6 @@ const parseJsonToDOM = (json) => {
   });
   return html;
 }
-
 //Parse plain text to DOM Object
 const parseTextToDOM = (json) => {
   const parser = new DOMParser()
@@ -160,127 +86,222 @@ const parseTextToDOM = (json) => {
   return html;
 }
 
-const getMember = (username) => {
-  let member = Object.assign({}, members);
+//> Send request functions
+// Fetch JSON from url
+const fetchJson =  (urlIn) => {
+  const proxy = "https://c-hive-proxy.herokuapp.com/";
   
-  const url = `https://${data.platformUrl}/${username}`
-  parseTextToDOM(fetchHtml(url)).then(html => {
-    const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
-    const name = html.getElementsByClassName("cover-title")[0].innerHTML;
-
-    member.name = name
-    member.username = username
-    member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
-    member.webUrl = `https://${data.platformUrl}/${username}`
-
-  });
-  return member
-}
-
-const getMembers = (path) => {
-  const url = `https://${data.platformUrl}/${path}`
-  let users = []
-  parseTextToDOM(fetchHtml(url)).then(html => {
-    const elements = html.getElementsByClassName("project_member")
- 
-    Array.from(elements).forEach(element => {
-      let username = element.getElementsByClassName("user-info")[0].querySelector("span.cgray").innerHTML;
-      username = username.substring(1);
-      users.push(getMember(username))
-    });
-  });
-  return users
-}
-
-const getRepositoryFromName = (nameWithOwner) => {
-  let repo = Object.assign({}, repos);
-  repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`
-  repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
-  repo.name = nameWithOwner
-
-  let owner = getMember(nameWithOwner.split("/")[1])
-
-  repo.owner = owner
-  repo.members = getMembers(`${repo.name}/-/project_members`)
-  //console.log(repo.members)
-  return repo
-}
-
-const getContributions = (server, username) => {
-  const limit = "2147483647";
-  const url = `https://${data.platformUrl}/${username}?limit=${limit}`
-
-  parseJsonToDOM(fetchJson(url)).then(res => {
-    let commits = getCommits(res)
-    let issues = getIssues(res)
-    let pullRequests = getPullRequests(res)
-
-    //console.log(commits)
-    //console.log(issues)
-    //console.log(pullRequests)
-
-
-    //console.log(keyMatch(commits,/^2018/))
+  const url = `${proxy}${urlIn}`;
+  return  fetch(url, {
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "X-Requested-With": "XMLHttpRequest"
+    }
   })
-  //console.log(contribs)
-  return null
+  .then( res =>  res.json())
+  .then(res => {return res})
 }
-
-// Convert HTML formatted event-items to contributions
-
-const convertToContributions = (items) => {
-  let contributions = {}
-  let contrib = null;
-  items.forEach(element => {
-    contrib = Object.assign({}, contribution);
-    var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
-    var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
-
-    contrib.time = time.split("T")[1]
-    contrib.nameWithOwner = nameWithOwner.substring(1)
-    contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
-
-    contributions[time.split("T")[0]] = contrib
-
-    let repo = getRepositoryFromName(nameWithOwner)
-    pushWithoutElem(data.repos,repo)
-  });
-
-  return contributions
-}
-
-// Get all Commits from DOM Object
-const getCommits = (html) => {
-  const activities = html.getElementsByClassName("event-item");
-  let commits = [];
-  Array.from(activities).forEach(a => {
-    if(a.innerHTML.includes("pushed to branch")){
-      commits.push(a);
+// Fetch HTML from url
+const fetchHtml =  (urlIn) => {
+  const proxy = "https://c-hive-proxy.herokuapp.com/";
+  
+  const url = `${proxy}${urlIn}`;
+  return  fetch(url, {
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      //"X-Requested-With": "XMLHttpRequest"
     }
-  });
-  return convertToContributions(commits);
+  })
+  .then( res =>  res.text())
+  .then(res => {return res})
 }
 
-// Get all Issues from DOM Object
-const getIssues = (html) => {
-  const activities = html.getElementsByClassName("event-item");
-  let issues = [];
-  Array.from(activities).forEach(a => {
-    if(a.innerHTML.includes("opened")){
-      issues.push(a);
-    }
-  });
-  return convertToContributions(issues);
-}
+//get Json data file
+export const get = (server, username) => {
 
-// Get all Pull Requests from DOM Object
-const getPullRequests = (html) => {
-  const activities = html.getElementsByClassName("event-item");
-  let pullRequests = [];
-  Array.from(activities).forEach(a => {
-    if(a.innerHTML.includes("Merge branch")){
-      pullRequests.push(a);
+  const fillStructure = (base) => {
+    // Fill profile of a user
+    const fillProfile =  () => {
+      const url = `https://${base.platformUrl}/${username}`;
+      parseTextToDOM(fetchHtml(url)).then(html => {
+        //console.log(html)
+        const status = html.getElementsByTagName("gl-emoji")[0];
+        const coverDesc =  html.getElementsByClassName("cover-desc")[0].getElementsByTagName("span");
+        const coverTitle =  html.getElementsByClassName("cover-title")[0];
+        const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
+        const links = html.getElementsByClassName("profile-link-holder")
+        const message = null;
+        const emojiHTML = null;
+        const username = coverDesc[0].innerHTML.trim().substring(1);
+        const date = coverDesc[1].innerHTML;
+
+        if(links[0]){
+          base.websiteUrl = links[0].getElementsByTagName("a")[0].getAttribute("href").split(":")[1];
+        }
+        if(links[2]){
+          base.email = links[2].getElementsByTagName("a")[0].getAttribute("href");
+        }
+        if(links[3]){
+          base.location = links[3].innerText.trim();
+        }
+        if(links[4]){
+          base.company = links[4].innerText.trim();
+        }
+        if(status){
+          base.status.message = status.innerHTML;
+          base.status.emojiHTML = status.outerHTML;
+        }
+
+        base.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
+
+        base.username = username;
+        base.name = coverTitle.innerHTML.trim();
+        base.createdAt = new Date(date);
+
+      });
     }
+    // Fill all Organizations a user is in into structure
+    const fillOrganizations =  async () => {
+      const url = `https://${base.platformUrl}/users/${username}/groups.json`;
+      //console.log(url)
+      let orgs = []
+      parseJsonToDOM(fetchJson(url)).then(async html => {
+        let org = null
+        const rows = html.getElementsByClassName("group-row");
+
+        for (const _org of Array.from(rows)){
+          org = Object.assign({}, organizations)
+          
+          const avatarUrl = _org.getElementsByClassName("avatar")[0].getAttribute("data-src");
+          const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
+
+          if (avatarUrl){
+            org.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(1)}`
+          }
+          org.name = `${name.substring(1)}`
+          org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`
+          org.members = await getMembers(`groups/${org.name}/-/group_members`)
+          //console.log(await getMembers(`groups/${org.name}/-/group_members`))
+          orgs.push(org)
+          //console.log(org)
+        }
+      })
+      base.organizations = orgs
+    }
+    // Fill all contributions and repositories
+    const fillContributions = async () => {
+
+      //> Repositories
+      // Get a repository from a given
+      const getRepositoryFromName = async (nameWithOwner) => {
+        let repo = Object.assign({}, repos);
+        repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`
+        repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
+        repo.name = nameWithOwner
+      
+        //let owner = await getMember(nameWithOwner)
+      
+        //repo.owner = owner
+        repo.members = await getMembers(`${repo.name}/-/project_members`)
+        //console.log(repo.members)
+        return repo
+      }
+
+      //> Contributions
+      // Convert HTML formatted event-items to contributions
+      const convertToContributions = async (items) => {
+        let contributions = {}
+        let contrib = null;
+        for(const element of items){
+          contrib = Object.assign({}, contribution);
+          var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
+          var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
+          //log(nameWithOwner)
+          contrib.time = time.split("T")[1]
+          contrib.nameWithOwner = nameWithOwner.substring(1)
+          //console.log(contrib.nameWithOwner)
+          contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
+
+          contributions[time.split("T")[0]] = contrib
+
+          let repo = await getRepositoryFromName(contrib.nameWithOwner)
+          pushWithoutElem(data.repos,repo)
+        };
+
+        return contributions
+      }
+      // Get all Commits from DOM Object
+      const getCommits = (html) => {
+        const activities = html.getElementsByClassName("event-item");
+        //console.log(activities)
+        let commits = [];
+        for (const a of Array.from(activities)){
+          if(a.innerHTML.includes("pushed to branch")){
+            commits.push(a);
+          }
+        }
+        return convertToContributions(commits);
+      }
+      // Get all Issues from DOM Object
+      const getIssues = (html) => {
+        const activities = html.getElementsByClassName("event-item");
+        let issues = [];
+        Array.from(activities).forEach(a => {
+          if(a.innerHTML.includes("opened")){
+            issues.push(a);
+          }
+        });
+        return convertToContributions(issues);
+      }
+      // Get all Pull Requests from DOM Object
+      const getPullRequests = (html) => {
+        const activities = html.getElementsByClassName("event-item");
+        let pullRequests = [];
+        Array.from(activities).forEach(a => {
+          if(a.innerHTML.includes("Merge branch")){
+            pullRequests.push(a);
+          }
+        });
+        return convertToContributions(pullRequests);
+      }
+
+      const limit = "2147483647";
+      const url = `https://${base.platformUrl}/${username}?limit=${limit}`
+    
+      parseJsonToDOM(fetchJson(url)).then(async res => {
+        let commits = await getCommits(res)
+        let issues = await getIssues(res)
+        let pullRequests = await getPullRequests(res)
+        console.log(commits)
+        console.log(issues)
+        console.log(pullRequests)
+
+        //console.log(keyMatch(commits,/^2018/))
+      })
+      return null
+    }
+
+    base.platformUrl = server;
+
+    fillProfile();
+    fillOrganizations();
+    fillContributions();
+
+    return base
+  }
+
+  
+  /*
+  .then(res => {
+    data.organizations = res;
+    return data;
   });
-  return convertToContributions(pullRequests);
-}
+  */
+  //const contribs = getContributions(server, username)
+  return fillStructure(data);
+};
+
+
+
+
+
