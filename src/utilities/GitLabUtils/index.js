@@ -5,8 +5,8 @@ let data = structure;
 //get Json data file
 export const get = (server, username) => {
   data.platformUrl = server;
-  // getContributions(server, username);
   data.organizations = getOrganizations(username);
+  getProfile(username)
   /*
   .then(res => {
     data.organizations = res;
@@ -70,6 +70,48 @@ var keyMatch = function(o,r){
   });
   return no
 };
+
+// Get profile of a user
+const getProfile = (username) => {
+  var profile = {}
+  const url = `https://${data.platformUrl}/${username}`;
+  parseTextToDOM(fetchHtml(url)).then(html => {
+    console.log(html)
+    const status = html.getElementsByTagName("gl-emoji")[0];
+    const cover =  html.getElementsByClassName("cover-desc")[0].getElementsByTagName("span");
+    const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
+    const links = html.getElementsByClassName("profile-link-holder")
+    const message = null;
+    const emojiHTML = null;
+    const username = cover[0].innerHTML.trim().substring(1);
+    const date = cover[1].innerHTML;
+
+    if(links[0]){
+      profile.websiteUrl = links[0].getElementsByTagName("a")[0].getAttribute("href").split(":")[1];
+    }
+    if(links[2]){
+      profile.email = links[2].getElementsByTagName("a")[0].getAttribute("href");
+    }
+    if(links[3]){
+      profile.location = links[3].innerText.trim();
+    }
+    if(links[4]){
+      profile.company = links[4].innerText.trim();
+    }
+    if(status){
+      profile.message = status.innerHTML;
+      profile.emojiHTML = status.outerHTML;
+    }
+
+    profile.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
+
+    profile.username = username;
+    profile.createdAt = new Date(date);
+
+    console.log(profile)
+  });
+  return profile
+}
 
 // Get all Organizations a user is in
 const getOrganizations = (username) => {
@@ -173,7 +215,12 @@ const getContributions = (server, username) => {
     let issues = getIssues(res)
     let pullRequests = getPullRequests(res)
 
-    console.log(keyMatch(commits,/^2018/))
+    //console.log(commits)
+    //console.log(issues)
+    //console.log(pullRequests)
+
+
+    //console.log(keyMatch(commits,/^2018/))
   })
   //console.log(contribs)
   return null
