@@ -48,9 +48,9 @@ export const githubProvider: IProvider<boolean> = {
         fetch(AuthorizeUrl, {
             headers: {
                 'Accept': "application/json",
-                'Access-Control-Allow-Origin': '*',
                 'Access-Allow-Credentials': 'True',
                 'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Origin': '*',
                 'Content-Type': "application/json",
                 'Vary': 'Origin',
             },
@@ -63,5 +63,4 @@ export const githubProvider: IProvider<boolean> = {
         })
         return true
     },
-    
 }
