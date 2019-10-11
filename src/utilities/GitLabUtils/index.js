@@ -134,7 +134,20 @@ const getMember = (username) => {
   return member
 }
 
-
+const getProjectMembers = (project) => {
+  const url = `https://${data.platformUrl}/${project}/-/project_members`
+  let users = []
+  parseTextToDOM(fetchHtml(url)).then(html => {
+    const elements = html.getElementsByClassName("project_member")
+ 
+    Array.from(elements).forEach(element => {
+      let username = element.getElementsByClassName("user-info")[0].querySelector("span.cgray").innerHTML;
+      username = username.split("@")[1];
+      users.push(getMember(username))
+    });
+  });
+  return users
+}
 
 const getContributions = (server, username) => {
   const limit = "2147483647";
