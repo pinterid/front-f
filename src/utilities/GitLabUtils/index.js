@@ -1,5 +1,5 @@
 // Import JSON structure
-import { structure, organizations, members, contribution} from "./objects";
+import { structure, organizations, members, contribution, repos} from "./objects";
 let data = structure;
 
 //get Json data file
@@ -12,7 +12,6 @@ export const get = (server, username) => {
     return data;
   });
   const contribs = getContributions(server, username)
-  console.log(contribs)
   return data;
 };
 
@@ -39,7 +38,7 @@ const fetchHtml = (urlIn) => {
   return fetch(url, {
     headers: {
       Accept: "application/json, text/plain, */*",
-      "X-Requested-With": "XMLHttpRequest"
+      //"X-Requested-With": "XMLHttpRequest"
     }
   })
   .then(async res => await res.text())
@@ -69,8 +68,10 @@ const getOrganizations = (server, username) => {
       .then(res => {
         orgObj.members = res;
       });
+      console.log(orgObj)
       temp.push(orgObj);
     });
+    
     return temp;
   });
 }
@@ -115,6 +116,25 @@ const parseTextToDOM = (json) => {
   });
   return html;
 }
+
+const getMember = (username) => {
+  let member = Object.assign({}, members);
+  
+  const url = `https://${data.platformUrl}/${username}`
+  parseTextToDOM(fetchHtml(url)).then(html => {
+    const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
+    const name = html.getElementsByClassName("cover-title")[0].innerHTML;
+
+    member.name = name
+    member.username = username
+    member.avatarUrl = `https:/${avatarUrl}`;
+    member.webUrl = `https://${data.platformUrl}/${username}`
+
+  });
+  return member
+}
+
+
 
 const getContributions = (server, username) => {
   const limit = "2147483647";
@@ -178,7 +198,7 @@ const getIssues = (html) => {
       issues.push(a);
     }
   });
-  console.log(convertToContributions(issues))
+  //console.log(convertToContributions(issues))
   return issues;
 }
 
@@ -191,6 +211,6 @@ const getPullRequests = (html) => {
       pullRequests.push(a);
     }
   });
-  console.log(convertToContributions(pullRequests))
+  //console.log(convertToContributions(pullRequests))
   return pullRequests;
 } 
