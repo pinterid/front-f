@@ -1,5 +1,5 @@
-import React from 'react';
-import { MDBContainer} from 'mdbreact';
+import React from "react";
+import { MDBContainer} from "mdbreact";
 class Redirect extends React.Component
 {
     getRedirect = async () => {

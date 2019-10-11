@@ -16,7 +16,7 @@ export const githubProvider: IProvider<boolean> = {
         &state=${state}`
     },
 
-    extractError(redirectUrl:string): Error | undefined
+    extractError(redirectUrl: string): Error | undefined
     {
         const errorMatch = redirectUrl.match(/error=([^&]+)/)
         if (!errorMatch) {
@@ -47,20 +47,21 @@ export const githubProvider: IProvider<boolean> = {
 
         fetch(AuthorizeUrl, {
             headers: {
-                'Access-Control-Allow-Origin': '*',
                 'Accept': "application/json",
+                'Access-Control-Allow-Origin': '*',
                 'Access-Allow-Credentials': 'True',
                 'Access-Control-Allow-Methods': 'POST',
                 'Content-Type': "application/json",
                 'Vary': 'Origin',
             },
-            method: "POST"
-        },)
+            method: "POST",
+        })
         .then(async res => await res.json())
         .then(res => {
             window.localStorage.setItem("access_token", JSON.stringify(res.access_token))
             window.localStorage.setItem("token_type", JSON.stringify(res.token_type))
         })
         return true
-    }
+    },
+    
 }
