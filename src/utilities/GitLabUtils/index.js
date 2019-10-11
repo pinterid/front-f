@@ -45,6 +45,19 @@ const fetchHtml = (urlIn) => {
   .then(res => {return res})
 }
 
+// Push element to a list without allowing duplicates
+function pushWithoutElem(array, elem) {
+  array.forEach( e => {
+      if (e.name == elem.name){
+          var index = array.indexOf(e);
+          if (index > -1) {
+              array.splice(index, 1);
+          }
+      }
+  })
+  array.push(elem)
+}
+
 // Get all Organizations a user is in
 const getOrganizations = (server, username) => {
   const limit = "2147483647";
@@ -201,7 +214,7 @@ const convertToContributions = (items) => {
     contributions[time.split("T")[0]] = contrib
 
     let repo = getRepositoryFromName(nameWithOwner)
-    data.repos.push(repo)
+    pushWithoutElem(data.repos,repo)
     //console.log(data.repos)
   });
   return contributions
@@ -244,4 +257,4 @@ const getPullRequests = (html) => {
   });
   //console.log(convertToContributions(pullRequests))
   return pullRequests;
-} 
+}
