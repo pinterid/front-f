@@ -121,11 +121,11 @@ const fetchHtml =  (urlIn) => {
 }
 
 //get Json data file
-export const get = (server, username) => {
+export const get = async (server, username) => {
 
-  const fillStructure = (base) => {
+  const fillStructure = async (base) => {
     // Fill profile of a user
-    const fillProfile =  () => {
+    const fillProfile =  async () => {
       const url = `https://${base.platformUrl}/${username}`;
       parseTextToDOM(fetchHtml(url)).then(html => {
         //console.log(html)
@@ -139,7 +139,7 @@ export const get = (server, username) => {
         const username = coverDesc[0].innerHTML.trim().substring(1);
         const date = coverDesc[1].innerHTML;
 
-        console.log(links)
+        //console.log(links)
         /*
         if(links[0]){
           base.websiteUrl = links[0].getElementsByTagName("a")[0].getAttribute("href").split(":")[1];
@@ -186,7 +186,7 @@ export const get = (server, username) => {
           }
           org.name = `${name.substring(1)}`
           org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`
-          org.members = await getMembers(`groups/${org.name}/-/group_members`)
+          //org.members = await getMembers(`groups/${org.name}/-/group_members`)
           orgs.push(org)
         }
       })
@@ -203,7 +203,7 @@ export const get = (server, username) => {
         repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
         repo.name = nameWithOwner
       
-        repo.members = await getMembers(`${repo.name}/-/project_members`)
+        //repo.members = await getMembers(`${repo.name}/-/project_members`)
         //console.log(repo.members)
         return repo
       }
@@ -279,6 +279,7 @@ export const get = (server, username) => {
       
       for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
         let year = cloneDeep(yearEntry);
+        year.stats.streak.currentStreak = "2001-01-01";
         var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
         let fill = (contributionsPerYear, type) => {
           for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
@@ -336,15 +337,14 @@ export const get = (server, username) => {
     })
     
     base.contributions.years = years
-    console.log(base)
   }
     base.platformUrl = server;
 
-    fillProfile();
-    fillOrganizations();
-    fillContributions();
+    await fillProfile();
+    await fillOrganizations();
+    await fillContributions();
 
     return base
   }
-  return fillStructure(data);
+  return await fillStructure(data);
 };
