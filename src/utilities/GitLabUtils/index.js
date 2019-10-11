@@ -146,8 +146,9 @@ const getMember = (username) => {
   return member
 }
 
-const getProjectMembers = (project) => {
-  const url = `https://${data.platformUrl}/${project}/-/project_members`
+const getMembers = (path) => {
+  const url = `https://${data.platformUrl}/${path}`
+  console.log(url)
   let users = []
   parseTextToDOM(fetchHtml(url)).then(html => {
     const elements = html.getElementsByClassName("project_member")
@@ -170,7 +171,7 @@ const getRepositoryFromName = (nameWithOwner) => {
   let owner = getMember(nameWithOwner.split("/")[1])
 
   repo.owner = owner
-  repo.members = getProjectMembers(repo.name)
+  repo.members = getMembers(`${repo.name}/-/project_members`)
   //console.log(repo.members)
   return repo
 }
@@ -200,7 +201,6 @@ const getContributions = (server, username) => {
 const convertToContributions = (items) => {
   let contributions = {}
   let contrib = null;
-
   items.forEach(element => {
     contrib = Object.assign({}, contribution);
     var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
@@ -214,8 +214,8 @@ const convertToContributions = (items) => {
 
     let repo = getRepositoryFromName(nameWithOwner)
     pushWithoutElem(data.repos,repo)
-    //console.log(data.repos)
   });
+
   return contributions
 }
 
