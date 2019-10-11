@@ -60,18 +60,13 @@ const getMember = async (username) => {
 // Get a list of members of a gitlab memberlist
 const getMembers = async (path) => {
   const url = `https://${data.platformUrl}/${path}`
-  //console.log(url)
   let users = []
     return parseTextToDOM(fetchHtml(url)).then(async html => {
       const elements = html.getElementsByClassName("user-info")
       Array.from(elements).forEach(async element => {
         let username =  element.getElementsByTagName("a")[0].getAttribute('href').substring(1);
-        //console.log(username)
-        //console.log(getMember(username))
         let member = await getMember(username)
-        //console.log(member)
         users.push(member)
-        //console.log(users)
       })
       return users
     });
@@ -192,9 +187,7 @@ export const get = (server, username) => {
           org.name = `${name.substring(1)}`
           org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`
           org.members = await getMembers(`groups/${org.name}/-/group_members`)
-          //console.log(await getMembers(`groups/${org.name}/-/group_members`))
           orgs.push(org)
-          //console.log(org)
         }
       })
       base.organizations = orgs
@@ -227,10 +220,8 @@ export const get = (server, username) => {
           contrib = Object.assign({}, contribution);
           var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
           var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
-          //log(nameWithOwner)
           contrib.time = time.split("T")[1]
           contrib.nameWithOwner = nameWithOwner.substring(1)
-          //console.log(contrib.nameWithOwner)
           contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
 
           if(!contributions[time.split("T")[0]]){
@@ -284,21 +275,15 @@ export const get = (server, username) => {
     
 
       let _years = []
-      var year = null
       const years = await parseJsonToDOM(fetchJson(url)).then(async res => {
       let commits = await getCommits(res)
       let issues = await getIssues(res)
       let pullRequests = await getPullRequests(res)
-        
-        
       let today = new Date();
       
       for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
         let year = cloneDeep(yearEntry);
-        console.log(year)
-        let contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
-        console.log(currentYear)
-
+        var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
         let fill = (contributionsPerYear, type) => {
           for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
             //cEntry = Object.assign({}, calendarEntry)
@@ -308,56 +293,35 @@ export const get = (server, username) => {
             }else{
               cEntry = year.calendar[key];
             }
+            
   
             
             cEntry.week = new Date(key).getWeekNumber()
             cEntry.weekday = new Date(key).getDay()
-            console.log(key, contributionGroup)
+            //console.log(key, contributionGroup)
   
             for (let [cKey, contribution] of Object.entries(contributionGroup)){
               cEntry.contributions[`${type}`].push(contribution);
               cEntry.total++;
             }
-            console.log(cEntry)
+            //console.log(cEntry)
             year.calendar[key] = cEntry;
           }
         }
 
-        fill(contributionsPerYear(commits), 'commits')
-        fill(contributionsPerYear(issues), 'issues')
-        fill(contributionsPerYear(pullRequests), 'pullRequests')
+        fill(contributionsPerYear(commits), 'commits');
+        fill(contributionsPerYear(issues), 'issues');
+        fill(contributionsPerYear(pullRequests), 'pullRequests');
 
-        
-        /*
-        for (let [key, commits] of Object.entries(contributionsPerYear(commits))) {
-          cEntry = Object.assign({}, calendarEntry)
-          cEntry.week = new Date(key).getWeekNumber()
-          cEntry.weekday = new Date(key).getDay()
-          for (let [key2, c] of Object.entries(commits)){
-            
-            cEntry.contributions.commits.push(c)
-            //console.log([key2,c])
-            cEntry.total++;
-          }
-          //console.log([key, cEntry])
-          console.log(year.)
-        }
-        */
         _years.push(year)
-        
-
-        //console.log(keyMatch(commits,/^currentYear/))
       }
-      //console.log(commits)
-      //console.log(issues)
-      //console.log(pullRequests)
 
       return _years
     })
-    console.log(years)
     
+    base.contributions.years = years
+    console.log(base)
   }
-
     base.platformUrl = server;
 
     fillProfile();
@@ -366,15 +330,6 @@ export const get = (server, username) => {
 
     return base
   }
-
-  
-  /*
-  .then(res => {
-    data.organizations = res;
-    return data;
-  });
-  */
-  //const contribs = getContributions(server, username)
   return fillStructure(data);
 };
 
