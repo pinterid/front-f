@@ -4,10 +4,11 @@ import { IProvider } from 'react-very-simple-oauth'
 const client_id = '2148629809594d57c113'
 const client_secret = '64a37e4846387cfcaea35d83afca3c9c8689628c'
 const state = guid()
-const redirect_uri = encodeURIComponent(`${window.location.origin}/redirect.html`)
+const redirect_uri = encodeURIComponent(`http://localhost:3000/oauth/redirect`)
+const proxyUrl = "https://c-hive-proxy.herokuapp.com/"
 
 export const githubProvider: IProvider<boolean> = {
-    buildAuthorizeUrl() {
+    buildAuthorizeUrl(): string {
         return `https://github.com/login/oauth/authorize?redirect_uri=${redirect_uri}        
         &client_id=${client_id}
         &client_secret=${client_secret}
@@ -41,20 +42,20 @@ export const githubProvider: IProvider<boolean> = {
             state = stateMatch[1]
         }
 
-        const AuthorizeUrl = `https://c-hive-proxy.herokuapp.com/https://github.com/login/oauth/access_token?code=${code}
+        const AuthorizeUrl = `${proxyUrl}https://github.com/login/oauth/access_token?code=${code}
         &client_secret=${client_secret}&client_id=${client_id}&redirect_uri=${redirect_uri}&state=${state}`
-        
+
         fetch(AuthorizeUrl, {
-            method: "POST",
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Vary': 'Origin',
+                'Accept': "application/json",
                 'Access-Allow-Credentials': 'True',
                 'Access-Control-Allow-Methods': 'POST',
-                'Accept': "application/json",
                 'Content-Type': "application/json",
-            }
-        })
+                'Vary': 'Origin',
+            },
+            method: "POST"
+        },)
         .then(async res => await res.json())
         .then(res => {
             window.localStorage.setItem("access_token", JSON.stringify(res.access_token))

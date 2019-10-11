@@ -1,13 +1,13 @@
-import React from 'react'
-import { MDBContainer} from 'mdbreact'
+import React from 'react';
+import { MDBContainer} from 'mdbreact';
 class Redirect extends React.Component
 {
     getRedirect = async () => {
         // Get name of window which was set by the parent to be the unique request key
-        const requestKey = window.name
+        const requestKey = window.name;
         // Update corresponding entry with the redirected url which should contain either access token or failure reason in the query parameter / hash
-        window.localStorage.setItem(requestKey, window.location.href)
-        window.close()
+        window.localStorage.setItem(requestKey, window.location.href);
+        window.close();
     }
     render () {
         return (
