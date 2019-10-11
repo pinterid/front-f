@@ -60,10 +60,19 @@ function pushWithoutElem(array, elem) {
   array.push(elem)
 }
 
+// Returns an object containing only those objects whose key matched the regex
+var keyMatch = function(o,r){
+  var no = {};
+  Object.keys(o).forEach(function(k){
+      if(r.test(k)){
+        no[k] = o
+      }
+  });
+  return no
+};
+
 // Get all Organizations a user is in
 const getOrganizations = (username) => {
-  console.log("GET ORGS OF:" + username)
-
   const url = `https://${data.platformUrl}/users/${username}/groups.json`;
   let orgs = []
   parseJsonToDOM(fetchJson(url)).then(html => {
@@ -128,7 +137,6 @@ const getMember = (username) => {
 
 const getMembers = (path) => {
   const url = `https://${data.platformUrl}/${path}`
-  console.log(url)
   let users = []
   parseTextToDOM(fetchHtml(url)).then(html => {
     const elements = html.getElementsByClassName("project_member")
@@ -164,6 +172,8 @@ const getContributions = (server, username) => {
     let commits = getCommits(res)
     let issues = getIssues(res)
     let pullRequests = getPullRequests(res)
+
+    console.log(keyMatch(commits,/^2018/))
   })
   //console.log(contribs)
   return null
