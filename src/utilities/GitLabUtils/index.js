@@ -299,21 +299,35 @@ export const get = (server, username) => {
         let contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
         console.log(currentYear)
 
-        for (let [key, commitGroup] of Object.entries(contributionsPerYear(commits))){
-          //cEntry = Object.assign({}, calendarEntry)
-          let cEntry = cloneDeep(calendarEntry);
-          
-          cEntry.week = new Date(key).getWeekNumber()
-          cEntry.weekday = new Date(key).getDay()
-          console.log(key, commitGroup)
-
-          for (let [cKey, commit] of Object.entries(commitGroup)){
-            cEntry.contributions.commits.push(commit)
-            cEntry.total++;
+        let fill = (contributionsPerYear, type) => {
+          for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
+            //cEntry = Object.assign({}, calendarEntry)
+            let cEntry = null
+            if (!year.calendar[key]){
+              cEntry = cloneDeep(calendarEntry);
+            }else{
+              cEntry = year.calendar[key];
+            }
+  
+            
+            cEntry.week = new Date(key).getWeekNumber()
+            cEntry.weekday = new Date(key).getDay()
+            console.log(key, contributionGroup)
+  
+            for (let [cKey, contribution] of Object.entries(contributionGroup)){
+              cEntry.contributions[`${type}`].push(contribution);
+              cEntry.total++;
+            }
+            console.log(cEntry)
+            year.calendar[key] = cEntry;
           }
-          console.log(cEntry)
-          year.calendar[key] = cEntry;
         }
+
+        fill(contributionsPerYear(commits), 'commits')
+        fill(contributionsPerYear(issues), 'issues')
+        fill(contributionsPerYear(pullRequests), 'pullRequests')
+
+        
         /*
         for (let [key, commits] of Object.entries(contributionsPerYear(commits))) {
           cEntry = Object.assign({}, calendarEntry)
