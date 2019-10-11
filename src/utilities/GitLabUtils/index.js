@@ -41,11 +41,9 @@ var keyMatch = function(o,r){
 //> Member functions
 // Get a member object by username
 const getMember = async (username) => {
-  var member = null;
-  
   const url = `https://${data.platformUrl}/${username}`
   return await parseTextToDOM(fetchHtml(url)).then(html => {
-    member = Object.assign({}, members);
+    let member = cloneDeep(members)
     const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
     const name = html.getElementsByClassName("cover-title")[0].innerHTML;
 
@@ -172,11 +170,10 @@ export const get = (server, username) => {
       //console.log(url)
       let orgs = []
       parseJsonToDOM(fetchJson(url)).then(async html => {
-        let org = null
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)){
-          org = Object.assign({}, organizations)
+          let org = cloneDeep(organizations)
           
           const avatarUrl = _org.getElementsByClassName("avatar")[0].getAttribute("data-src");
           const name = _org.getElementsByClassName("group-name")[0].getAttribute("href");
@@ -198,7 +195,7 @@ export const get = (server, username) => {
       //> Repositories
       // Get a repository from a given
       const getRepositoryFromName = async (nameWithOwner) => {
-        let repo = Object.assign({}, repos);
+        let repo = cloneDeep(repos)
         repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`
         repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`
         repo.name = nameWithOwner
@@ -215,9 +212,8 @@ export const get = (server, username) => {
       // Convert HTML formatted event-items to contributions
       const convertToContributions = async (items) => {
         let contributions = {}
-        let contrib = null;
         for(const element of items){
-          contrib = Object.assign({}, contribution);
+          let contrib = cloneDeep(contribution);
           var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
           var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
           contrib.time = time.split("T")[1]
@@ -286,7 +282,6 @@ export const get = (server, username) => {
         var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
         let fill = (contributionsPerYear, type) => {
           for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
-            //cEntry = Object.assign({}, calendarEntry)
             let cEntry = null
             if (!year.calendar[key]){
               cEntry = cloneDeep(calendarEntry);
