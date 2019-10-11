@@ -1,8 +1,19 @@
+
 // Import JSON structure
-import { structure, organizations, members, contribution, repos, calendarEntry, years} from "./objects";
+import { structure, organizations, members, contribution, repos, calendarEntry, yearEntry} from "./objects";
+// Import clonedeep
+var cloneDeep = require("lodash.clonedeep")
 let data = structure;
 
 //> Helper functions
+// Get calendar week from date
+Date.prototype.getWeekNumber = function(){
+  var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+  var dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+};
 // Push element to a list without allowing duplicates
 function pushWithoutElem(array, elem) {
   array.forEach( e => {
@@ -271,26 +282,67 @@ export const get = (server, username) => {
       const limit = "2147483647";
       const url = `https://${base.platformUrl}/${username}?limit=${limit}`
     
-      parseJsonToDOM(fetchJson(url)).then(async res => {
-        let commits = await getCommits(res)
-        let issues = await getIssues(res)
-        let pullRequests = await getPullRequests(res)
-        console.log(commits)
-        let today = new Date();
-        //let year = Object.assign({}, years); 
-        for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
-          console.log(currentYear)
 
-          //console.log(keyMatch(commits,/^currentYear/))
-        }
-        //console.log(commits)
-        //console.log(issues)
-        //console.log(pullRequests)
-
+      let _years = []
+      var year = null
+      const years = await parseJsonToDOM(fetchJson(url)).then(async res => {
+      let commits = await getCommits(res)
+      let issues = await getIssues(res)
+      let pullRequests = await getPullRequests(res)
         
-      })
-      return null
-    }
+        
+      let today = new Date();
+      
+      for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
+        let year = cloneDeep(yearEntry);
+        console.log(year)
+        let contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
+        console.log(currentYear)
+
+        for (let [key, commitGroup] of Object.entries(contributionsPerYear(commits))){
+          //cEntry = Object.assign({}, calendarEntry)
+          let cEntry = cloneDeep(calendarEntry);
+          
+          cEntry.week = new Date(key).getWeekNumber()
+          cEntry.weekday = new Date(key).getDay()
+          console.log(key, commitGroup)
+
+          for (let [cKey, commit] of Object.entries(commitGroup)){
+            cEntry.contributions.commits.push(commit)
+            cEntry.total++;
+          }
+          console.log(cEntry)
+          year.calendar[key] = cEntry;
+        }
+        /*
+        for (let [key, commits] of Object.entries(contributionsPerYear(commits))) {
+          cEntry = Object.assign({}, calendarEntry)
+          cEntry.week = new Date(key).getWeekNumber()
+          cEntry.weekday = new Date(key).getDay()
+          for (let [key2, c] of Object.entries(commits)){
+            
+            cEntry.contributions.commits.push(c)
+            //console.log([key2,c])
+            cEntry.total++;
+          }
+          //console.log([key, cEntry])
+          console.log(year.)
+        }
+        */
+        _years.push(year)
+        
+
+        //console.log(keyMatch(commits,/^currentYear/))
+      }
+      //console.log(commits)
+      //console.log(issues)
+      //console.log(pullRequests)
+
+      return _years
+    })
+    console.log(years)
+    
+  }
 
     base.platformUrl = server;
 
