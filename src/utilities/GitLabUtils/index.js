@@ -139,6 +139,8 @@ export const get = (server, username) => {
         const username = coverDesc[0].innerHTML.trim().substring(1);
         const date = coverDesc[1].innerHTML;
 
+        console.log(links)
+        /*
         if(links[0]){
           base.websiteUrl = links[0].getElementsByTagName("a")[0].getAttribute("href").split(":")[1];
         }
@@ -155,6 +157,7 @@ export const get = (server, username) => {
           base.status.message = status.innerHTML;
           base.status.emojiHTML = status.outerHTML;
         }
+        */
 
         base.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
 
@@ -345,8 +348,3 @@ export const get = (server, username) => {
   }
   return fillStructure(data);
 };
-
-
-
-
-
