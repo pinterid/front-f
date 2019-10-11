@@ -6,8 +6,11 @@
   "license": "(EUPL-1.2)",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "domjson": "^0.1.2",
     "isomorphic-ws": "^4.0.1",
     "jquery": "^3.4.1",
+    "jsonml-parse": "^1.0.1",
+    "lodash.clonedeep": "^4.5.0",
     "mdbreact": "mdbreact-4.20.0.tgz",
     "nightmare": "^3.0.2",
     "node-sass": "^4.12.0",
