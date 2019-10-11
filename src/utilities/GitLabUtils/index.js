@@ -62,6 +62,7 @@ function pushWithoutElem(array, elem) {
 
 // Get all Organizations a user is in
 const getOrganizations = (username) => {
+  console.log("GET ORGS OF:" + username)
 
   const url = `https://${data.platformUrl}/users/${username}/groups.json`;
   let orgs = []
@@ -157,22 +158,15 @@ const getRepositoryFromName = (nameWithOwner) => {
 
 const getContributions = (server, username) => {
   const limit = "2147483647";
+  const url = `https://${data.platformUrl}/${username}?limit=${limit}`
 
-  const url = `https://${server}/${username}?limit=${limit}`
-  const html = parseJsonToDOM(fetchJson(url));
-  let commits = [];
-    let issues = [];
-    let pullRequests = [];
-  const contribs = html
-  .then(res => {
-    let commits = getCommits(res);
-    let issues = getIssues(res);
-    let pullRequests = getPullRequests(res);
-
-    //console.log(commits)
-  });
+  parseJsonToDOM(fetchJson(url)).then(res => {
+    let commits = getCommits(res)
+    let issues = getIssues(res)
+    let pullRequests = getPullRequests(res)
+  })
   //console.log(contribs)
-  return {"commits": commits, "issues": issues, "pullRequests": pullRequests};
+  return null
 }
 
 // Convert HTML formatted event-items to contributions
@@ -207,8 +201,7 @@ const getCommits = (html) => {
       commits.push(a);
     }
   });
-  console.log(convertToContributions(commits))
-  return commits;
+  return convertToContributions(commits);
 }
 
 // Get all Issues from DOM Object
@@ -220,8 +213,7 @@ const getIssues = (html) => {
       issues.push(a);
     }
   });
-  //console.log(convertToContributions(issues))
-  return issues;
+  return convertToContributions(issues);
 }
 
 // Get all Pull Requests from DOM Object
@@ -233,6 +225,5 @@ const getPullRequests = (html) => {
       pullRequests.push(a);
     }
   });
-  //console.log(convertToContributions(pullRequests))
-  return pullRequests;
+  return convertToContributions(pullRequests);
 }
