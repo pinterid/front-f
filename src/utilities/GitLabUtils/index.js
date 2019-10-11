@@ -1,5 +1,5 @@
 // Import JSON structure
-import { structure, organizations, members, contribution, repos} from "./objects";
+import { structure, organizations, members, contribution, repos, calendarEntry, years} from "./objects";
 let data = structure;
 
 //> Helper functions
@@ -20,7 +20,7 @@ var keyMatch = function(o,r){
   var no = {};
   Object.keys(o).forEach(function(k){
       if(r.test(k)){
-        no[k] = o
+        no[k] = o[k]
       }
   });
   return no
@@ -222,7 +222,10 @@ export const get = (server, username) => {
           //console.log(contrib.nameWithOwner)
           contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
 
-          contributions[time.split("T")[0]] = contrib
+          if(!contributions[time.split("T")[0]]){
+            contributions[time.split("T")[0]] = []
+          }
+          contributions[time.split("T")[0]].push(contrib)
 
           let repo = await getRepositoryFromName(contrib.nameWithOwner)
           pushWithoutElem(data.repos,repo)
@@ -273,10 +276,18 @@ export const get = (server, username) => {
         let issues = await getIssues(res)
         let pullRequests = await getPullRequests(res)
         console.log(commits)
-        console.log(issues)
-        console.log(pullRequests)
+        let today = new Date();
+        //let year = Object.assign({}, years); 
+        for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
+          console.log(currentYear)
 
-        //console.log(keyMatch(commits,/^2018/))
+          //console.log(keyMatch(commits,/^currentYear/))
+        }
+        //console.log(commits)
+        //console.log(issues)
+        //console.log(pullRequests)
+
+        
       })
       return null
     }
