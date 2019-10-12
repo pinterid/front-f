@@ -42,8 +42,13 @@ const getMember = async (username) => {
   const url = `https://${data.platformUrl}/${username}`
   return await parseTextToDOM(fetchHtml(url)).then(html => {
     let member = {...members}
-    const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
-    const name = html.getElementsByClassName("cover-title")[0].innerHTML;
+    const avatarUrl = html
+    .getElementsByClassName("avatar-holder")[0]
+    .getElementsByTagName('a')[0]
+    .getAttribute('href');
+    const name = html
+    .getElementsByClassName("cover-title")[0]
+    .innerHTML;
 
     member.name = name
     member.username = username
@@ -127,11 +132,18 @@ export const get = async (server, username) => {
       const url = `https://${base.platformUrl}/${username}`;
       parseTextToDOM(fetchHtml(url)).then(html => {
         //console.log(html)
-        const status = html.getElementsByTagName("gl-emoji")[0];
-        const coverDesc =  html.getElementsByClassName("cover-desc")[0].getElementsByTagName("span");
-        const coverTitle =  html.getElementsByClassName("cover-title")[0];
-        const avatarUrl = html.getElementsByClassName("avatar-holder")[0].getElementsByTagName('a')[0].getAttribute('href');
-        const links = html.getElementsByClassName("profile-link-holder")
+        const status = html
+        .getElementsByTagName("gl-emoji")[0];
+        const coverDesc =  html
+        .getElementsByClassName("cover-desc")[0]
+        .getElementsByTagName("span");
+        const coverTitle =  html
+        .getElementsByClassName("cover-title")[0];
+        const avatarUrl = html
+        .getElementsByClassName("avatar-holder")[0]
+        .getElementsByTagName('a')[0].getAttribute('href');
+        const links = html
+        .getElementsByClassName("profile-link-holder")
         const message = null;
         const emojiHTML = null;
         const username = coverDesc[0].innerHTML.trim().substring(1);
@@ -212,8 +224,13 @@ export const get = async (server, username) => {
         let contributions = {}
         for(const element of items){
           let contrib = {...contribution};
-          var time = element.getElementsByTagName('time')[0].getAttribute("datetime");
-          var nameWithOwner = element.getElementsByClassName('event-scope')[0].getElementsByTagName('a')[0].getAttribute("href");
+          var time = element
+          .getElementsByTagName('time')[0]
+          .getAttribute("datetime");
+          var nameWithOwner = element
+          .getElementsByClassName('event-scope')[0]
+          .getElementsByTagName('a')[0]
+          .getAttribute("href");
           contrib.time = time.split("T")[1]
           contrib.nameWithOwner = nameWithOwner.substring(1)
           contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`
