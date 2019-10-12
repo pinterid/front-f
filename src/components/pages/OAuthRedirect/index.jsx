@@ -1,6 +1,6 @@
 //> React
 // Contains all the functionality necessary to define React components
-import React from 'react';
+import React from "react";
 
 class Redirect extends React.Component {
 
