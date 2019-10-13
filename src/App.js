@@ -20,7 +20,7 @@ import Routes from './Routes';
 
 //> Tests
 // Testing retrieving activity data from gitLab
-import './App.test'
+import './App.test';
 
 
 class App extends React.Component {
