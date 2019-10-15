@@ -3,6 +3,26 @@
 import { structure, organizations, members, contribution, repos, calendarEntry, yearEntry} from "./Objects";
 let data = structure;
 
+//> Parser functions
+// Parse Json to DOM Object
+const parseJsonToDOM = (json) => {
+  const parser = new DOMParser();
+  const html = json
+  .then((res) => {
+    return parser.parseFromString(res.html, "text/html");
+  });
+  return html;
+}
+//Parse plain text to DOM Object
+const parseTextToDOM = (json) => {
+  const parser = new DOMParser();
+  const html = json
+  .then((res) => {
+    return parser.parseFromString(res, "text/html");
+  });
+  return html;
+}
+
 //> Helper functions
 // Get calendar week from date
 Date.prototype.getWeekNumber = function(){
@@ -47,7 +67,7 @@ const fetchJson =  (urlIn) => {
       "X-Requested-With": "XMLHttpRequest"
     }
   })
-  .then( res =>  res.json())
+  .then( (res) =>  res.json())
   .then(res => {return res});
 }
 // Fetch HTML from url
@@ -61,8 +81,8 @@ const fetchHtml =  (urlIn) => {
       //"X-Requested-With": "XMLHttpRequest"
     }
   })
-  .then( res =>  res.text())
-  .then(res => {return res});
+  .then( (res) =>  res.text())
+  .then( (res) => {return res;});
 }
 
 //> Member functions
@@ -100,26 +120,6 @@ const getMembers = async (path) => {
       })
       return users;
     });
-}
-
-//> Parser functions
-// Parse Json to DOM Object
-const parseJsonToDOM = (json) => {
-  const parser = new DOMParser();
-  const html = json
-  .then((res) => {
-    return parser.parseFromString(res.html, "text/html");
-  });
-  return html;
-}
-//Parse plain text to DOM Object
-const parseTextToDOM = (json) => {
-  const parser = new DOMParser()
-  const html = json
-  .then((res) => {
-    return parser.parseFromString(res, "text/html");
-  });
-  return html;
 }
 
 // Get Json data file
@@ -241,7 +241,7 @@ export const get = async (server, username) => {
 
           let repo = await getRepositoryFromName(contrib.nameWithOwner);
           pushWithoutElem(data.repos,repo);
-        };
+        }
 
         return contributions;
       }
@@ -272,7 +272,7 @@ export const get = async (server, username) => {
       const getPullRequests = (html) => {
         const activities = html.getElementsByClassName("event-item");
         let pullRequests = [];
-        Array.from(activities).forEach(a => {
+        Array.from(activities).forEach((a) => {
           if(a.innerHTML.includes("Merge branch")){
             pullRequests.push(a);
           }
@@ -284,8 +284,8 @@ export const get = async (server, username) => {
       const url = `https://${base.platformUrl}/${username}?limit=${limit}`;
     
 
-      let _years = []
-      const years = await parseJsonToDOM(fetchJson(url)).then(async res => {
+      let _years = [];
+      const years = await parseJsonToDOM(fetchJson(url)).then(async (res) => {
       let commits = await getCommits(res);
       let issues = await getIssues(res);
       let pullRequests = await getPullRequests(res);
@@ -294,7 +294,7 @@ export const get = async (server, username) => {
       for (let currentYear = base.createdAt.getFullYear(); currentYear <= today.getFullYear(); currentYear++) {
         let year = {...yearEntry};
         year.stats.streak.currentStreak = "2001-01-01";
-        var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)))};
+        var contributionsPerYear = (contributions) => {return (keyMatch(contributions,new RegExp('^' + currentYear)));};
         let fill = (contributionsPerYear, type) => {
           for (let [key, contributionGroup] of Object.entries(contributionsPerYear)){
             let cEntry = null;
@@ -348,7 +348,7 @@ export const get = async (server, username) => {
       }
 
       return _years;
-    })
+    });
     
     base.contributions.years = years;
   }
@@ -359,6 +359,6 @@ export const get = async (server, username) => {
     await fillContributions();
 
     return base;
-  }
+  };
   return await fillStructure(data);
 };

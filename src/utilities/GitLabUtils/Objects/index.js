@@ -133,7 +133,7 @@ export const structure = {
       "count": "",
       "edges": []
     }
-  }
+  };
   
   export const labels = {
     "name": "",
