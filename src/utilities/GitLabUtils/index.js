@@ -156,7 +156,7 @@ export const get = async (server, username) => {
         const username = coverDesc[0].innerHTML.trim().substring(1);
         const date = coverDesc[1].innerHTML;
 
-        base.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(
+        base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
           1
         )}`;
 
@@ -200,8 +200,8 @@ export const get = async (server, username) => {
       // Get a repository from a given
       const getRepositoryFromName = async nameWithOwner => {
         let repo = JSON.parse(JSON.stringify(repos));
-        repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`;
-        repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`;
+        repo.repoUrl = `https://${base.platformUrl}/${nameWithOwner}`;
+        repo.avatarUrl = `https://${base.platformUrl}/${nameWithOwner}/-/avatar`;
         repo.name = nameWithOwner;
 
         return repo;
@@ -222,7 +222,7 @@ export const get = async (server, username) => {
             .getAttribute("href");
           contrib.time = time.split("T")[1];
           contrib.nameWithOwner = nameWithOwner.substring(1);
-          contrib.repoUrl = `https://${data.platformUrl}/${contrib.nameWithOwner}`;
+          contrib.repoUrl = `https://${base.platformUrl}/${contrib.nameWithOwner}`;
 
           if (!contributions[time.split("T")[0]]) {
             contributions[time.split("T")[0]] = [];
@@ -230,7 +230,7 @@ export const get = async (server, username) => {
           contributions[time.split("T")[0]].push(contrib);
 
           let repo = await getRepositoryFromName(contrib.nameWithOwner);
-          pushWithoutElem(data.repos, repo);
+          pushWithoutElem(base.repos, repo);
         }
 
         return contributions;
