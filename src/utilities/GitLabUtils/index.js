@@ -157,7 +157,7 @@ export const get = async (server, username) => {
         const date = coverDesc[1].innerHTML;
 
         if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
-          base.avatarUrl = avatarUrl
+          base.avatarUrl = avatarUrl;
         }else{
           base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
           1
@@ -258,7 +258,7 @@ export const get = async (server, username) => {
       const getIssues = (html) => {
         const activities = html.getElementsByClassName("event-item");
         let issues = [];
-        Array.from(activities).forEach(a => {
+        Array.from(activities).forEach((a) => {
           if (a.innerHTML.includes("opened")) {
             issues.push(a);
           }
