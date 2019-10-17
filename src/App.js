@@ -19,28 +19,24 @@ import {
 //> Routes
 import Routes from './Routes';
 
-//> Test
-// A test with the user "torvalds"
-import "./App.test";
+//> Tests
+// Testing retrieving activity data from gitLab
+import './App.test';
 
 class App extends React.Component {
   render() {
     return (
       <Router>
         <div className="flyout">
-          {
-          /*
+          {/*
           <Navbar />
-          */
-          }
+          */}
           <main>
             <Routes />
           </main>
-          {
-          /*
+          {/*
           <Footer />
-          */
-          }
+          */}
         </div>
       </Router>
     );
@@ -49,7 +45,7 @@ class App extends React.Component {
 
 export default App;
 
-/** 
+/**
  * SPDX-License-Identifier: (EUPL-1.2)
  * Copyright © 2019 Werbeagentur Christian Aichner
  */
