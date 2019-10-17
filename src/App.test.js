@@ -9,11 +9,3 @@ import * as gitLab from './utilities/GitLabUtils';
  * .get('<GitLab server>', '<username>')
  * .then(res => console.log(res));
  */
-
-gitLab
-.get("gitlab.htl-villach.at", "kleberf")
-.then((res) => console.log(res));
-
-gitLab
-.get("gitlab.htl-villach.at", "woh")
-.then((res) => console.log(res));

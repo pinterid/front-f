@@ -12,17 +12,17 @@ let data = null;
 
 //> Parser functions
 // Parse Json to DOM Object
-const parseJsonToDOM = json => {
+const parseJsonToDOM = (json) => {
   const parser = new DOMParser();
-  const html = json.then(res => {
+  const html = json.then((res) => {
     return parser.parseFromString(res.html, "text/html");
   });
   return html;
 };
 //Parse plain text to DOM Object
-const parseTextToDOM = json => {
+const parseTextToDOM = (json) => {
   const parser = new DOMParser();
-  const html = json.then(res => {
+  const html = json.then((res) => {
     return parser.parseFromString(res, "text/html");
   });
   return html;
@@ -41,7 +41,7 @@ Date.prototype.getWeekNumber = function() {
 };
 // Push element to a list without allowing duplicates
 function pushWithoutElem(array, elem) {
-  array.forEach(e => {
+  array.forEach((e) => {
     if (e.name === elem.name) {
       var index = array.indexOf(e);
       if (index > -1) {
@@ -64,7 +64,7 @@ var keyMatch = function(o, r) {
 
 //> Send request functions
 // Fetch JSON from url
-const fetchJson = urlIn => {
+const fetchJson = (urlIn) => {
   const proxy = "https://c-hive-proxy.herokuapp.com/";
 
   const url = `${proxy}${urlIn}`;
@@ -74,13 +74,13 @@ const fetchJson = urlIn => {
       "X-Requested-With": "XMLHttpRequest"
     }
   })
-    .then(res => res.json())
-    .then(res => {
+    .then((res) => res.json())
+    .then((res) => {
       return res;
     });
 };
 // Fetch HTML from url
-const fetchHtml = urlIn => {
+const fetchHtml = (urlIn) => {
   const proxy = "https://c-hive-proxy.herokuapp.com/";
 
   const url = `${proxy}${urlIn}`;
@@ -89,17 +89,17 @@ const fetchHtml = urlIn => {
       Accept: "application/json, text/plain, */*"
     }
   })
-    .then(res => res.text())
-    .then(res => {
+    .then((res) => res.text())
+    .then((res) => {
       return res;
     });
 };
 
 //> Member functions
 // Get a member object by username
-const getMember = async username => {
+const getMember = async (username) => {
   const url = `https://${data.platformUrl}/${username}`;
-  return await parseTextToDOM(fetchHtml(url)).then(html => {
+  return await parseTextToDOM(fetchHtml(url)).then((html) => {
     let member = JSON.parse(JSON.stringify(members));
     const avatarUrl = html
       .getElementsByClassName("avatar-holder")[0]
@@ -116,12 +116,12 @@ const getMember = async username => {
   });
 };
 // Get a list of members of a gitlab memberlist
-const getMembers = async path => {
+const getMembers = async (path) => {
   const url = `https://${data.platformUrl}/${path}`;
   let users = [];
-  return parseTextToDOM(fetchHtml(url)).then(async html => {
+  return parseTextToDOM(fetchHtml(url)).then(async (html) => {
     const elements = html.getElementsByClassName("user-info");
-    Array.from(elements).forEach(async element => {
+    Array.from(elements).forEach(async (element) => {
       let username = element
         .getElementsByTagName("a")[0]
         .getAttribute("href")
@@ -136,11 +136,11 @@ const getMembers = async path => {
 // Get Json data file
 export const get = async (server, username) => {
   data = JSON.parse(JSON.stringify(structure));
-  const fillStructure = async base => {
+  const fillStructure = async (base) => {
     // Fill profile of a user
     const fillProfile = async () => {
       const url = `https://${base.platformUrl}/${username}`;
-      parseTextToDOM(fetchHtml(url)).then(html => {
+      parseTextToDOM(fetchHtml(url)).then((html) => {
         const status = html.getElementsByTagName("gl-emoji")[0];
         const coverDesc = html
           .getElementsByClassName("cover-desc")[0]
@@ -173,7 +173,7 @@ export const get = async (server, username) => {
     const fillOrganizations = async () => {
       const url = `https://${base.platformUrl}/users/${username}/groups.json`;
       let orgs = [];
-      parseJsonToDOM(fetchJson(url)).then(async html => {
+      parseJsonToDOM(fetchJson(url)).then(async (html) => {
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)) {
@@ -188,7 +188,7 @@ export const get = async (server, username) => {
 
           if (avatarUrl) {
             if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
-              base.avatarUrl = avatarUrl
+              base.avatarUrl = avatarUrl;
             }else{
               base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
                 1
@@ -206,7 +206,7 @@ export const get = async (server, username) => {
     const fillContributions = async () => {
       //> Repositories
       // Get a repository from a given
-      const getRepositoryFromName = async nameWithOwner => {
+      const getRepositoryFromName = async (nameWithOwner) => {
         let repo = JSON.parse(JSON.stringify(repos));
         repo.repoUrl = `https://${base.platformUrl}/${nameWithOwner}`;
         repo.avatarUrl = `https://${base.platformUrl}/${nameWithOwner}/-/avatar`;
@@ -217,7 +217,7 @@ export const get = async (server, username) => {
 
       //> Contributions
       // Convert HTML formatted event-items to contributions
-      const convertToContributions = async items => {
+      const convertToContributions = async (items) => {
         let contributions = {};
         for (const element of items) {
           let contrib = JSON.parse(JSON.stringify(contribution));
@@ -244,7 +244,7 @@ export const get = async (server, username) => {
         return contributions;
       };
       // Get all Commits from DOM Object
-      const getCommits = html => {
+      const getCommits = (html) => {
         const activities = html.getElementsByClassName("event-item");
         let commits = [];
         for (const a of Array.from(activities)) {
@@ -255,7 +255,7 @@ export const get = async (server, username) => {
         return convertToContributions(commits);
       };
       // Get all Issues from DOM Object
-      const getIssues = html => {
+      const getIssues = (html) => {
         const activities = html.getElementsByClassName("event-item");
         let issues = [];
         Array.from(activities).forEach(a => {
@@ -266,10 +266,10 @@ export const get = async (server, username) => {
         return convertToContributions(issues);
       };
       // Get all Pull Requests from DOM Object
-      const getPullRequests = html => {
+      const getPullRequests = (html) => {
         const activities = html.getElementsByClassName("event-item");
         let pullRequests = [];
-        Array.from(activities).forEach(a => {
+        Array.from(activities).forEach((a) => {
           if (a.innerHTML.includes("Merge branch")) {
             pullRequests.push(a);
           }
@@ -281,7 +281,7 @@ export const get = async (server, username) => {
       const url = `https://${base.platformUrl}/${username}?limit=${limit}`;
 
       let _years = [];
-      const years = await parseJsonToDOM(fetchJson(url)).then(async res => {
+      const years = await parseJsonToDOM(fetchJson(url)).then(async (res) => {
         let commits = await getCommits(res);
         let issues = await getIssues(res);
         let pullRequests = await getPullRequests(res);
@@ -294,7 +294,7 @@ export const get = async (server, username) => {
         ) {
           let year = JSON.parse(JSON.stringify(yearEntry));
           year.stats.streak.currentStreak = "2001-01-01";
-          var contributionsPerYear = contributions => {
+          var contributionsPerYear = (contributions) => {
             return keyMatch(contributions, new RegExp("^" + currentYear));
           };
           let fill = (contributionsPerYear, type) => {
