@@ -156,9 +156,13 @@ export const get = async (server, username) => {
         const username = coverDesc[0].innerHTML.trim().substring(1);
         const date = coverDesc[1].innerHTML;
 
-        base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
+        if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
+          base.avatarUrl = avatarUrl
+        }else{
+          base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
           1
         )}`;
+        }
 
         base.username = username;
         base.name = coverTitle.innerHTML.trim();
@@ -183,9 +187,13 @@ export const get = async (server, username) => {
             .getAttribute("href");
 
           if (avatarUrl) {
-            org.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
-              1
-            )}`;
+            if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
+              base.avatarUrl = avatarUrl
+            }else{
+              base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
+                1
+              )}`;
+            }
           }
           org.name = `${name.substring(1)}`;
           org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`;
