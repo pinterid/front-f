@@ -7,8 +7,8 @@ import {
   repos,
   calendarEntry,
   yearEntry
-} from "./Objects";
-let data = structure;
+} from './Objects';
+let data = null;
 
 //> Parser functions
 // Parse Json to DOM Object
@@ -100,7 +100,7 @@ const fetchHtml = urlIn => {
 const getMember = async username => {
   const url = `https://${data.platformUrl}/${username}`;
   return await parseTextToDOM(fetchHtml(url)).then(html => {
-    let member = { ...members };
+    let member = JSON.parse(JSON.stringify(members));
     const avatarUrl = html
       .getElementsByClassName("avatar-holder")[0]
       .getElementsByTagName("a")[0]
@@ -135,6 +135,7 @@ const getMembers = async path => {
 
 // Get Json data file
 export const get = async (server, username) => {
+  data = JSON.parse(JSON.stringify(structure));
   const fillStructure = async base => {
     // Fill profile of a user
     const fillProfile = async () => {
@@ -172,7 +173,7 @@ export const get = async (server, username) => {
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)) {
-          let org = { ...organizations };
+          let org = JSON.parse(JSON.stringify(organizations));
 
           const avatarUrl = _org
             .getElementsByClassName("avatar")[0]
@@ -198,7 +199,7 @@ export const get = async (server, username) => {
       //> Repositories
       // Get a repository from a given
       const getRepositoryFromName = async nameWithOwner => {
-        let repo = { ...repos };
+        let repo = JSON.parse(JSON.stringify(repos));
         repo.repoUrl = `https://${data.platformUrl}/${nameWithOwner}`;
         repo.avatarUrl = `https://${data.platformUrl}/${nameWithOwner}/-/avatar`;
         repo.name = nameWithOwner;
@@ -211,7 +212,7 @@ export const get = async (server, username) => {
       const convertToContributions = async items => {
         let contributions = {};
         for (const element of items) {
-          let contrib = { ...contribution };
+          let contrib = JSON.parse(JSON.stringify(contribution));
           var time = element
             .getElementsByTagName("time")[0]
             .getAttribute("datetime");
@@ -283,7 +284,7 @@ export const get = async (server, username) => {
           currentYear <= today.getFullYear();
           currentYear++
         ) {
-          let year = { ...yearEntry };
+          let year = JSON.parse(JSON.stringify(yearEntry));
           year.stats.streak.currentStreak = "2001-01-01";
           var contributionsPerYear = contributions => {
             return keyMatch(contributions, new RegExp("^" + currentYear));
@@ -294,7 +295,7 @@ export const get = async (server, username) => {
             )) {
               let cEntry = null;
               if (!year.calendar[key]) {
-                cEntry = { ...calendarEntry };
+                cEntry = JSON.parse(JSON.stringify(calendarEntry));
               } else {
                 cEntry = year.calendar[key];
               }
