@@ -1,0 +1,22 @@
+#socialdata{
+    .connected{
+        i{
+            &.verified{
+                position: relative;
+                &::after{
+                    content: "\2713";
+                    position: absolute;
+                    color: green;
+                    font-size: 20px;
+                    font-weight: bold;
+                    top: 10px;
+                }
+            }
+        }
+    }
+}
+
+/** 
+ * SPDX-License-Identifier: (EUPL-1.2)
+ * Copyright © 2019 Werbeagentur Christian Aichner
+ */
