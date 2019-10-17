@@ -3,62 +3,63 @@ import { gql } from "apollo-boost";
 
 // Structure GQL profile code
 export const GET_PROFILE = gql`
-query getData($username: String!) {
-  user(login: $username) {
-    avatarUrl
-    company
-    createdAt
-    name
-    email
-    websiteUrl
-    hovercard {
-      contexts {
+  query getData($username: String!) {
+    user(login: $username) {
+      avatarUrl
+      company
+      createdAt
+      name
+      login
+      email
+      websiteUrl
+      hovercard {
+        contexts {
+          message
+          octicon
+        }
+      }
+      isEmployee
+      isHireable
+      location
+      status {
+        emojiHTML
+        expiresAt
         message
-        octicon
+        updatedAt
       }
-    }
-    isEmployee
-    isHireable
-    location
-    status {
-      emojiHTML
-      expiresAt
-      message
-      updatedAt
-    }
-    organizations(first: 100) {
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-      edges {
-        node {
-          name
-          url
-          avatarUrl
-          name
-          membersWithRole(first: 100) {
-            totalCount
-            nodes {
-              name
-              login
-              avatarUrl
-              url
-              projectsUrl
+      organizations(first: 100) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        edges {
+          node {
+            name
+            url
+            avatarUrl
+            name
+            membersWithRole(first: 100) {
+              totalCount
+              nodes {
+                name
+                login
+                avatarUrl
+                url
+                projectsUrl
+              }
             }
           }
         }
       }
     }
   }
-}
-
 `;
 
 // Structure GQL calendar code
-const getCalendarQueryPart = (year,c) => {
+const getCalendarQueryPart = (fromYear, toYear, c) => {
   return `
-  c${c}: contributionsCollection(to:"${year}"){
+  c${c}: contributionsCollection(from:"${fromYear}", to:"${toYear}" ){
+     contributionYears
      contributionCalendar{
         totalContributions
         weeks{
@@ -84,10 +85,13 @@ const getCalendarQueryPart = (year,c) => {
                 deletions
                 committedDate
                 history{
-                  edges{
-                    node{
-                      committedDate
+                  nodes{
+                    committer{
+                      user{
+                        login
+                      }
                     }
+                    committedDate
                   }
                 }
               }
@@ -127,10 +131,13 @@ const getCalendarQueryPart = (year,c) => {
                 deletions
                 committedDate
                 history{
-                  edges{
-                    node{
-                      committedDate
+                  nodes{
+                    committer{
+                      user{
+                        login
+                      }
                     }
+                    committedDate
                   }
                 }
               }
@@ -170,10 +177,13 @@ const getCalendarQueryPart = (year,c) => {
                 deletions
                 committedDate
                 history{
-                  edges{
-                    node{
-                      committedDate
+                  nodes{
+                    committer{
+                      user{
+                        login
+                      }
                     }
+                    committedDate
                   }
                 }
               }
@@ -206,20 +216,24 @@ const getCalendarQueryPart = (year,c) => {
 
 // Generates a dynamic query structure
 const generateCalendarsQuery = (username, createdAtDate) => {
+  var currentYear = new Date().getFullYear();
 
-  const date = new Date();
+  var fromDate = new Date(currentYear, 0, 2);
+  var toDate = new Date(currentYear + 1, 0, 1);
+
   var query = "";
   var count = 1;
 
-  while(date.getFullYear() >= createdAtDate.getFullYear()){
-      
-      query += getCalendarQueryPart(date.toJSON(),count);
+  while (fromDate.getFullYear() >= createdAtDate.getFullYear()) {
+    query += getCalendarQueryPart(fromDate.toJSON(), toDate.toJSON(), count);
+    console.log(fromDate.toJSON());
+    //console.log(date.setDate(date.getDate()-1))
 
-      date.setFullYear(date.getFullYear()-1);
-      count++;
+    fromDate.setFullYear(fromDate.getFullYear() - 1);
+    toDate.setFullYear(toDate.getFullYear() - 1);
+    count++;
   }
   return query;
-
 };
 
 // Get calendar basic structure
@@ -235,7 +249,7 @@ export const getCalendar = (username, createdAt) => {
   return query;
 };
 
-/** 
+/**
  * SPDX-License-Identifier: (EUPL-1.2)
  * Copyright © 2019 Werbeagentur Christian Aichner
  */

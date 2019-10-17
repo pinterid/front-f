@@ -1,8 +1,10 @@
 {
   "date": "",
+  "week": "",
+  "weekday": "",
   "total": "",
   "color": "",
-  "contributions:": {
+  "contributions": {
     "commits": [],
     "codeReviews": [],
     "pullRequests": [],
