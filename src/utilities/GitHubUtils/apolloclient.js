@@ -20,7 +20,7 @@ const cache = new InMemoryCache({ fragmentMatcher });
 const APILink = APIHost+"/graphql";
 
 // Created HttpLink
-const LINK:HttpLink = new HttpLink({
+const LINK = new HttpLink({
   uri: APILink,
   headers: {
     authorization: `Bearer ${

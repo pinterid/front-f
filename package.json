@@ -17,7 +17,9 @@
     "react-apollo": "^3.1.1",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "react-very-simple-oauth": "^1.0.0",
+    "typescript": "^3.6.4"
   },
   "repository": {
     "type": "git",
