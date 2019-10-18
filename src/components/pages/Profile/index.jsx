@@ -111,12 +111,16 @@ class Dashboard extends React.Component {
     var merge = require('lodash.merge');
     const call = async () => {
       let objects = []
+      console.log(this.state.users)
       if(this.state.users.gitlab){
-        this.state.users.github.map(async (username)=>{
-          objects.push(await gitLab.get('gitlab.htl-villach.at', username))
+        this.state.users.github.forEach(async (username)=>{
+          console.log(username)
+          await gitLab.get('gitlab.htl-villach.at', username).then(res => {
+            console.log(res)
+          })
         })
       }
-      if(this.state.user.github){
+      if(this.state.users.github){
         this.state.users.github.map(async (username)=>{
           objects.push(await gitHub.get(username))
         })
@@ -129,7 +133,9 @@ class Dashboard extends React.Component {
 
         //console.log(obj3,connector.getCalendarFromStructure(obj3))
       const mergedObjects = merge(objects)
-      const contribObjects = connector.getCalendarFromStructure(mergedObjects)
+      console.log(objects)
+      console.log(mergedObjects)
+      const contribObjects = mergedObjects
         this.setState({
           user: {
             contrib: contribObjects,
