@@ -44,9 +44,8 @@ class Calender2D extends React.Component {
     // Add resize listener
     window.addEventListener('resize', this.updateDimensions);
 
-    let contributions = this.props.contributions.years;
-    let cnew = contributions[0];
-    //console.log(cnew);
+    let cnew = this.props.contributions.contributionCalendar;
+    console.log(cnew);
 
     this.setState({
         width: this.myInput.current.offsetWidth,
@@ -132,9 +131,9 @@ class Calender2D extends React.Component {
       </MDBRow>
       <div ref={this.myInput}>
         <svg className="calendar" height={this.state.width/53*7}>
-        {this.state.contributionsList && this.state.contributionsList.weeks.map((week, wkey) => {
+        {(this.state.contributionsList && this.state.width) && this.state.contributionsList.weeks.map((week, wkey) => {
           return(
-          week.map((day, dkey) => {
+          week.contributionDays.map((day, dkey) => {
               if(wkey === 0){
               return(
                   <rect

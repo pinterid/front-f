@@ -111,14 +111,18 @@ class Dashboard extends React.Component {
     var merge = require('lodash.merge');
     const call = async () => {
         const obj1 = await gitLab.get('gitlab.htl-villach.at', 'kleberf')
-        const obj2 = await gitHub.get('kleberbaum')
+        const obj2 = await gitHub.get('schettn')
         const obj3 = {...obj1, ...obj2}
         const test = connector.getCalendarFromStructure(obj3)
 
         console.log(obj3,connector.getCalendarFromStructure(obj3))
 
-        window.localStorage.setItem('USER_CONTRIB', JSON.stringify(test));
-        window.localStorage.setItem('USER_DATA_COMBINED', JSON.stringify(obj3));
+        this.setState({
+          user: {
+            contrib: test,
+            data: obj3
+          }
+        }, () => this.fetchData());
     }
     call();
 
@@ -146,15 +150,15 @@ class Dashboard extends React.Component {
         gitlab: usersGitLab ? usersGitLab : undefined,
         github: usersGitHub ? usersGitHub : undefined,
       }
-    })
+    }, this.createData())
   }
 
   fetchData = async () => {
-    let data = localStorage.getItem('USER_DATA_COMBINED');
-    let contrib = localStorage.getItem('USER_CONTRIB');
+    let data = this.state.user.data;
+    let contrib = this.state.user.contrib;
     if(data && contrib){
-      let dataJSON = JSON.parse(data);
-      let contribJSON = JSON.parse(contrib);
+      let dataJSON = data;
+      let contribJSON = contrib;
       if(dataJSON && contribJSON){
         console.log(dataJSON,contribJSON);
         this.setState({
@@ -171,12 +175,22 @@ class Dashboard extends React.Component {
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
 
-    const { data, contrib } = this.state;
+    const { user } = this.state;
+
+    let data = undefined;
+    let contrib = undefined;
+
+    if(this.state.user){
+      data = this.state.user.data;
+      contrib = this.state.user.contrib;
+    }
+
+    console.log(data, contrib);
 
     // Debugging access point - state
     //console.log(this.state);
 
-    if(data){
+    if(data && contrib){
       return (
         
         <div id="profile">
