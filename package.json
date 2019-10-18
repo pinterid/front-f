@@ -9,6 +9,7 @@
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-client": "^2.6.4",
     "apollo-link-http": "^1.5.16",
+    "deepmerge": "^4.1.1",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "lodash.merge": "^4.6.2",

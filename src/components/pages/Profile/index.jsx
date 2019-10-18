@@ -53,6 +53,7 @@ import {
 
 //> CSS
 import './profile.scss';
+import { mergeDeep } from 'apollo-utilities';
 
 //> Dummy data
 // Tab headers
@@ -109,21 +110,24 @@ class Dashboard extends React.Component {
     * .then(res => console.log(res));
     */
     console.log(this.state.users);
-    var merge = require('lodash.merge');
+    var deepMerge = require('deepmerge');
     const call = async () => {
       let objects = []
       console.log(this.state.users)
       if(this.state.users.gitlab){
-        this.state.users.github.forEach(async (username)=>{
+        this.state.users.gitlab.forEach(async (username)=>{
           console.log(username)
           await gitLab.get('gitlab.htl-villach.at', username).then(res => {
-            console.log("Res",res)
+            objects.push(res)
           })
         })
       }
       if(this.state.users.github){
-        this.state.users.github.map(async (username)=>{
-          objects.push(await gitHub.get(username))
+        this.state.users.github.forEach(async (username)=>{
+          console.log(username)
+          await gitHub.get(username).then(res => {
+            objects.push(res)
+          })
         })
       }
         
@@ -133,14 +137,18 @@ class Dashboard extends React.Component {
         //const test = connector.getCalendarFromStructure(obj3)
 
         //console.log(obj3,connector.getCalendarFromStructure(obj3))
-      const mergedObjects = merge(objects)
+        //let mergedObjects = {};
+        if(objects){
+          console.log("Deep",deepMerge(...objects))
+        }
+      
       console.log(objects)
-      console.log(mergedObjects)
-      const contribObjects = mergedObjects
+      //console.log(mergedObjects)
+      const contribObjects = null
         this.setState({
           user: {
             contrib: contribObjects,
-            data: mergedObjects
+            data: contribObjects
           }
         }, () => this.fetchData());
     }
