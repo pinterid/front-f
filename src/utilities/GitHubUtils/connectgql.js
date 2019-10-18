@@ -1,5 +1,6 @@
 import * as apollo from "./apolloclient";
 import * as gqlData from "./gqlData";
+import * as translator from "./translator";
 
 // Get profile and calendar
 export function get(username) {
@@ -20,11 +21,13 @@ export function get(username) {
       query: gqlData.getCalendar(username, createdAtDate),
     });
 
-
     const objUser = {};
     objUser.profile = resProfile.data.user;
     objUser.calendar = resCalendar.data.user;
-    return objUser;
+
+    console.log(objUser);
+
+    return translator.getTranslatorObj(objUser);
   };
 
   return getPlatform(username);

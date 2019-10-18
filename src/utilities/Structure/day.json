@@ -1,0 +1,13 @@
+{
+  "date": "",
+  "week": "",
+  "weekday": "",
+  "total": "",
+  "color": "",
+  "contributions": {
+    "commits": [],
+    "codeReviews": [],
+    "pullRequests": [],
+    "issues": []
+  }
+}
