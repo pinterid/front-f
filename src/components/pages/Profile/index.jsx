@@ -2,6 +2,9 @@
 // Contains all the functionality necessary to define React components
 import React from 'react';
 
+//> Additional modules
+import queryString from 'query-string';
+
 //> MDB
 // "Material Design for Bootstrap" is a great UI design framework
 import {
@@ -104,7 +107,24 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { username } = this.props.match.params;
+    const params = this.props.location.search;
+    console.log(params);
+
+    let qs = queryString.parse(this.props.location.search, { ignoreQueryPrefix: true });
+    console.log(qs);
+    let paramGitHub = qs.github;
+    let paramGitLab = qs.gitlab;
+
+    let usersGitHub = paramGitHub.split(' ');
+    let usersGitLab = paramGitLab.split(' ');
+
+    let users = {
+      github: usersGitHub,
+      gitlab: usersGitLab
+    }
+
+    console.log(users);
+
     
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
