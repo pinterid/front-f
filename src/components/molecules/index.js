@@ -6,6 +6,7 @@ import Socialdata from './Socialdata';
 import Calendar2D from './Calendar2D';
 import Calendar3D from './Calendar3D';
 import LanguageChart from './LanguageChart';
+import ContribChart from './ContribChart';
 
 export {
     TabContainer,
@@ -14,6 +15,7 @@ export {
     Calendar2D,
     Calendar3D,
     LanguageChart,
+    ContribChart,
 };
 
 /** 
