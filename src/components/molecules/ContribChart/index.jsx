@@ -15,14 +15,14 @@ class ChartsPage extends React.Component {
       datasets: [
         {
           label: "GitHub",
-          backgroundColor: "rgba(0, 126, 255, 1)",
-          borderColor: "rgb(0,191,255)",
+          backgroundColor: "rgba(0, 126, 255, 0.3)",
+          borderColor: "rgba(0,191,255, 0.5)",
           data: [28, 30, 60, 81]
         },
         {
           label: "GitLab",
-          backgroundColor: "rgba(255, 153, 0, 1)",
-          borderColor: "rgb(255,140,0)",
+          backgroundColor: "rgba(255, 153, 0, 0.3)",
+          borderColor: "rgba(255,140,0,0.5)",
           data: [45, 35, 40, 19]
         }
       ]
