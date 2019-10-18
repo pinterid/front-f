@@ -11,19 +11,19 @@ import {
 class ChartsPage extends React.Component {
   state = {
     dataRadar: {
-      labels: ["Commit", "Pull request", "Issues", "Code review"],
+      labels: ["Code review", "Issues", "Pull request", "Commits"],
       datasets: [
         {
-          label: "First dataset",
-          backgroundColor: "rgba(194, 116, 161, 0.5)",
-          borderColor: "rgb(194, 116, 161)",
-          data: [65, 59, 90, 81, 56, 55, 40]
+          label: "GitHub",
+          backgroundColor: "rgba(0, 126, 255, 1)",
+          borderColor: "rgb(0,191,255)",
+          data: [28, 30, 60, 81]
         },
         {
-          label: "Second dataset",
-          backgroundColor: "rgba(71, 225, 167, 0.5)",
-          borderColor: "rgb(71, 225, 167)",
-          data: [28, 48, 40, 19, 96, 27,100]
+          label: "GitLab",
+          backgroundColor: "rgba(255, 153, 0, 1)",
+          borderColor: "rgb(255,140,0)",
+          data: [45, 35, 40, 19]
         }
       ]
     }
