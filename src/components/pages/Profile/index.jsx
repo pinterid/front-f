@@ -38,6 +38,7 @@ import {
   TabContainer,
   Avatar,
   Socialdata,
+  ContribChart,
 } from '../../molecules';
 // Organisms
 import {
@@ -137,8 +138,15 @@ class Dashboard extends React.Component {
     let paramGitHub = qs.github;
     let paramGitLab = qs.gitlab;
 
-    let usersGitHub = paramGitHub.split(' ');
-    let usersGitLab = paramGitLab.split(' ');
+    let usersGitHub = undefined;
+    let usersGitLab = undefined;
+
+    if(paramGitHub){
+      usersGitHub = paramGitHub.split(' ');
+    }
+    if(paramGitLab){
+      usersGitLab = paramGitLab.split(' ');
+    }
 
     let users = {
       github: usersGitHub,
