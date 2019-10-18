@@ -27,6 +27,11 @@ import {
 //> Images
 // To be added
 
+//> Utils
+import * as gitLab from '../../../utilities/GitLabUtils';
+import * as gitHub from '../../../utilities/GitHubUtils';
+import * as connector from '../../../utilities/ConnectorUtils';
+
 //> Components
 // Molecules
 import {
@@ -83,10 +88,65 @@ class Dashboard extends React.Component {
   state = {
     data: undefined,
     contrib: undefined,
+    users: {
+      gitlab: undefined,
+      github: undefined,
+    }
   }
 
   componentDidMount = () => {
-    this.fetchData();
+    this.getParams();
+  }
+
+  createData = () => {
+    /*> GitLab Util
+    * The point of this utility is to get specific data
+    * of a specific user.
+    *
+    * Usage:
+    * gitLab
+    * .get('<GitLab server>', '<username>')
+    * .then(res => console.log(res));
+    */
+    var merge = require('lodash.merge');
+    const call = async () => {
+        const obj1 = await gitLab.get('gitlab.htl-villach.at', 'kleberf')
+        const obj2 = await gitHub.get('kleberbaum')
+        const obj3 = {...obj1, ...obj2}
+        const test = connector.getCalendarFromStructure(obj3)
+
+        console.log(obj3,connector.getCalendarFromStructure(obj3))
+
+        window.localStorage.setItem('USER_CONTRIB', JSON.stringify(test));
+        window.localStorage.setItem('USER_DATA_COMBINED', JSON.stringify(obj3));
+    }
+    call();
+
+    // Get calendar years from local storage
+    // ---> JSON.parse(window.localStorage.getItem("test"))
+  }
+
+  getParams = () => {
+    const params = this.props.location.search;
+
+    let qs = queryString.parse(this.props.location.search, { ignoreQueryPrefix: true });
+    let paramGitHub = qs.github;
+    let paramGitLab = qs.gitlab;
+
+    let usersGitHub = paramGitHub.split(' ');
+    let usersGitLab = paramGitLab.split(' ');
+
+    let users = {
+      github: usersGitHub,
+      gitlab: usersGitLab
+    }
+
+    this.setState({
+      users: {
+        gitlab: usersGitLab ? usersGitLab : undefined,
+        github: usersGitHub ? usersGitHub : undefined,
+      }
+    })
   }
 
   fetchData = async () => {
@@ -107,25 +167,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const params = this.props.location.search;
-    console.log(params);
-
-    let qs = queryString.parse(this.props.location.search, { ignoreQueryPrefix: true });
-    console.log(qs);
-    let paramGitHub = qs.github;
-    let paramGitLab = qs.gitlab;
-
-    let usersGitHub = paramGitHub.split(' ');
-    let usersGitLab = paramGitLab.split(' ');
-
-    let users = {
-      github: usersGitHub,
-      gitlab: usersGitLab
-    }
-
-    console.log(users);
-
-    
+      
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
 
