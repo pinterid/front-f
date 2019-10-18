@@ -3,6 +3,13 @@
         max-width: 7.655%;
         flex: 0 0 7.655%;
     }
+    svg{
+        width: 100%;
+        overflow: visible;
+        rect{
+            stroke-width:3;stroke:rgb(255,255,255)
+        }
+    }
 }
 
 /** 

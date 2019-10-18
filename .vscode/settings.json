@@ -38,5 +38,6 @@
         "precached",
         "renamer",
         "webfonts"
-    ]
+    ],
+    "editor.tabSize": 2
 }

@@ -13,7 +13,7 @@ import {
     MDBNavLink,
     MDBIcon,
     MDBTabContent,
-
+    MDBBadge,
 } from 'mdbreact';
 
 //> CSS
@@ -24,21 +24,30 @@ class TabContainer extends React.Component {
     state = {
         activeItemInnerPills: 0,
         activeSubItem: 0,
+        activeHorizontalItem: 0,
     };
     
-    toggleOuterPills = tab => e => {
+    toggleOuterPills = (tab) => (e) => {
         if (this.state.activeItemInnerPills !== tab) {
-        this.setState({
-            activeItemInnerPills: tab
-        });
+            this.setState({
+                activeItemInnerPills: tab
+            });
         }
     };
     
-    toggleSub = tab => e => {
+    toggleSub = (tab) => (e) => {
         if (this.state.activeSubItem !== tab) {
-        this.setState({
-            activeSubItem: tab
-        });
+            this.setState({
+                activeSubItem: tab
+            });
+        }
+    };
+
+    toggleHorizontal = (tab) => (e) => {
+        if (this.state.activeHorizontalItem !== tab) {
+            this.setState({
+                activeHorizontalItem: tab
+            });
         }
     };
 
@@ -53,7 +62,7 @@ class TabContainer extends React.Component {
                                 <MDBNavItem key={key}>
                                     <MDBNavLink 
                                     to="#" 
-                                    active={ this.state.activeItemInnerPills === key} 
+                                    active={this.state.activeItemInnerPills === key} 
                                     onClick={this.toggleOuterPills(key)}
                                     className="text-left"
                                     >
@@ -101,7 +110,35 @@ class TabContainer extends React.Component {
         } else if(this.props.horizontal){
             return (
             <>
-                <p>Not available yet</p>
+                <MDBNav className="nav-tabs mt-5">
+                {this.props.items && this.props.items.map((item, key) => {
+                if(item.visible){
+                    return(
+                    <MDBNavItem key={key}>
+                        <MDBNavLink
+                        to="#"
+                        active={this.state.activeHorizontalItem === key}
+                        onClick={this.toggleHorizontal(key)}
+                        role="tab"
+                        >
+                        {item.title}
+                        {item.notification &&
+                            <MDBBadge pill color="danger"> </MDBBadge>
+                        }
+                        {item.pill &&
+                            <MDBBadge className="ml-2" pill color="light">{item.pill}</MDBBadge>
+                        }
+                        </MDBNavLink>
+                    </MDBNavItem>
+                    );
+                } else {
+                    return null;
+                }
+                })}
+                </MDBNav>
+                <MDBTabContent activeItem={this.state.activeHorizontalItem} >
+                    {this.props.children}
+                </MDBTabContent>
             </>
             );
         } else {
