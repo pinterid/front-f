@@ -14,6 +14,7 @@ import {
 import {
   Calendar2D,
   Calendar3D,
+  ContribChart,
 } from '../../../molecules';
 
 class Overview extends React.Component {
@@ -28,6 +29,7 @@ class Overview extends React.Component {
         <Calendar3D 
         contributions={this.props.contributions}
         />
+        <ContribChart />
         </>
       }
       </MDBTabPane>
