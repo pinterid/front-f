@@ -110,17 +110,30 @@ class Dashboard extends React.Component {
     */
     var merge = require('lodash.merge');
     const call = async () => {
-        const obj1 = await gitLab.get('gitlab.htl-villach.at', 'kleberf')
-        const obj2 = await gitHub.get('schettn')
-        const obj3 = {...obj1, ...obj2}
-        const test = connector.getCalendarFromStructure(obj3)
+      let objects = []
+      if(this.state.users.gitlab){
+        this.state.users.github.map(async (username)=>{
+          objects.push(await gitLab.get('gitlab.htl-villach.at', username))
+        })
+      }
+      if(this.state.user.github){
+        this.state.users.github.map(async (username)=>{
+          objects.push(await gitHub.get(username))
+        })
+      }
+        
+        //const obj1 = await gitLab.get('gitlab.htl-villach.at', 'kleberf')
+        //const obj2 = await gitHub.get('schettn')
+        //const obj3 = {...obj1, ...obj2}
+        //const test = connector.getCalendarFromStructure(obj3)
 
-        console.log(obj3,connector.getCalendarFromStructure(obj3))
-
+        //console.log(obj3,connector.getCalendarFromStructure(obj3))
+      const mergedObjects = merge(objects)
+      const contribObjects = connector.getCalendarFromStructure(mergedObjects)
         this.setState({
           user: {
-            contrib: test,
-            data: obj3
+            contrib: contribObjects,
+            data: mergedObjects
           }
         }, () => this.fetchData());
     }
