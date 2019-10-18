@@ -92,11 +92,46 @@ class Dashboard extends React.Component {
     users: {
       gitlab: undefined,
       github: undefined,
-    }
+    },
+    loaded: false,
   }
 
   componentDidMount = () => {
     this.getParams();
+  }
+
+  getSourceData = async () => {
+    console.log("Called");
+      let objects = []
+      if(this.state.users.gitlab){
+        this.state.users.gitlab.forEach(async (username)=>{
+          console.log(username)
+          await gitLab.get('gitlab.htl-villach.at', username).then(res => {
+            objects.push(res)
+            this.setState({
+              sourceDataGitLab: {
+                ...this.state.sourceDataGitLab,
+                res
+              }
+            });
+          })
+        })
+      }
+      if(this.state.users.github){
+        this.state.users.github.forEach(async (username)=>{
+          console.log(username)
+          await gitHub.get(username).then(res => {
+            objects.push(res)
+            this.setState({
+              sourceDataGitHub: {
+                ...this.state.sourceDataGitHub,
+                res
+              }
+            });
+          })
+        })
+      }
+      return objects;
   }
 
   createData = () => {
@@ -109,53 +144,24 @@ class Dashboard extends React.Component {
     * .get('<GitLab server>', '<username>')
     * .then(res => console.log(res));
     */
-    console.log(this.state.users);
-    var deepMerge = require('deepmerge');
-    const call = async () => {
-      let objects = []
-      console.log(this.state.users)
-      if(this.state.users.gitlab){
-        this.state.users.gitlab.forEach(async (username)=>{
-          console.log(username)
-          await gitLab.get('gitlab.htl-villach.at', username).then(res => {
-            objects.push(res)
-          })
-        })
-      }
-      if(this.state.users.github){
-        this.state.users.github.forEach(async (username)=>{
-          console.log(username)
-          await gitHub.get(username).then(res => {
-            objects.push(res)
-          })
-        })
-      }
-        
-        //const obj1 = await gitLab.get('gitlab.htl-villach.at', 'kleberf')
-        //const obj2 = await gitHub.get('schettn')
-        //const obj3 = {...obj1, ...obj2}
-        //const test = connector.getCalendarFromStructure(obj3)
+    
 
-        //console.log(obj3,connector.getCalendarFromStructure(obj3))
-        //let mergedObjects = {};
-        if(objects){
-          console.log("Deep",deepMerge(...objects))
+    let gitlab = this.state.sourceDataGitLab;
+    let github = this.state.sourceDataGitHub;
+
+    if(gitlab && github){
+      const deepMerge = require('deepmerge');
+      let merged = deepMerge(gitlab.res,github.res);
+      const contribObjects = connector.getCalendarFromStructure(merged);
+      console.log("contrib",merged);
+      this.setState({
+        user: {
+          contrib: contribObjects,
+          data: merged,
+          loaded: true,
         }
-      
-      console.log(objects)
-      //console.log(mergedObjects)
-      const contribObjects = null
-        this.setState({
-          user: {
-            contrib: contribObjects,
-            data: contribObjects
-          }
-        }, () => this.fetchData());
+      }, () => this.fetchData());
     }
-    call();
-
-    // Get calendar years from local storage
-    // ---> JSON.parse(window.localStorage.getItem("test"))
   }
 
   getParams = () => {
@@ -175,12 +181,14 @@ class Dashboard extends React.Component {
       usersGitLab = paramGitLab.split(' ');
     }
 
+    console.log(usersGitHub, usersGitLab);
+
     this.setState({
       users: {
         gitlab: usersGitLab ? usersGitLab : undefined,
         github: usersGitHub ? usersGitHub : undefined,
       }
-    }, () => this.createData())
+    }, () => this.getSourceData())
   }
 
   fetchData = async () => {
@@ -194,6 +202,7 @@ class Dashboard extends React.Component {
         this.setState({
           data: dataJSON,
           contrib: contribJSON,
+          loaded: true
         });
       }
     }
@@ -205,7 +214,7 @@ class Dashboard extends React.Component {
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
 
-    const { user } = this.state;
+    const { user, sourceDataGitHub, sourceDataGitLab } = this.state;
 
     let data = undefined;
     let contrib = undefined;
@@ -216,6 +225,13 @@ class Dashboard extends React.Component {
     }
 
     console.log(data, contrib);
+
+    console.log("Checking");
+    console.log(sourceDataGitHub, sourceDataGitLab);
+
+    if(sourceDataGitHub && sourceDataGitHub && !this.state.loaded){
+      this.createData();
+    }
 
     // Debugging access point - state
     //console.log(this.state);
@@ -251,7 +267,7 @@ class Dashboard extends React.Component {
                 <TabContainer items={tabitems} horizontal>
                   <OverviewTab
                   id={0}
-                  contributions={contrib[contrib.length - 1]}
+                  contributions={contrib[3]}
                   />
                   <ResumeTab
                   id={1}
