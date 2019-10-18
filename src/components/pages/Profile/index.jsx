@@ -108,6 +108,7 @@ class Dashboard extends React.Component {
     * .get('<GitLab server>', '<username>')
     * .then(res => console.log(res));
     */
+    console.log(this.state.users);
     var merge = require('lodash.merge');
     const call = async () => {
       let objects = []
@@ -116,7 +117,7 @@ class Dashboard extends React.Component {
         this.state.users.github.forEach(async (username)=>{
           console.log(username)
           await gitLab.get('gitlab.htl-villach.at', username).then(res => {
-            console.log(res)
+            console.log("Res",res)
           })
         })
       }
@@ -166,17 +167,12 @@ class Dashboard extends React.Component {
       usersGitLab = paramGitLab.split(' ');
     }
 
-    let users = {
-      github: usersGitHub,
-      gitlab: usersGitLab
-    }
-
     this.setState({
       users: {
         gitlab: usersGitLab ? usersGitLab : undefined,
         github: usersGitHub ? usersGitHub : undefined,
       }
-    }, this.createData())
+    }, () => this.createData())
   }
 
   fetchData = async () => {
