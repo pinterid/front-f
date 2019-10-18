@@ -78,7 +78,8 @@ const tabitems = [
 class Dashboard extends React.Component {
 
   state = {
-    data: undefined
+    data: undefined,
+    contrib: undefined,
   }
 
   componentDidMount = () => {
@@ -86,15 +87,20 @@ class Dashboard extends React.Component {
   }
 
   fetchData = async () => {
-    let data = localStorage.getItem('DUMMY_DATA');
-    if(data){
+    let data = localStorage.getItem('USER_DATA_COMBINED');
+    let contrib = localStorage.getItem('USER_CONTRIB');
+    if(data && contrib){
       let dataJSON = JSON.parse(data);
-      if(dataJSON){
+      let contribJSON = JSON.parse(contrib);
+      if(dataJSON && contribJSON){
+        console.log(dataJSON,contribJSON);
         this.setState({
-          data: dataJSON
+          data: dataJSON,
+          contrib: contribJSON,
         });
       }
     }
+
   }
 
   render() {
@@ -103,7 +109,7 @@ class Dashboard extends React.Component {
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
 
-    const { data } = this.state;
+    const { data, contrib } = this.state;
 
     // Debugging access point - state
     //console.log(this.state);
@@ -139,7 +145,7 @@ class Dashboard extends React.Component {
                 <TabContainer items={tabitems} horizontal>
                   <OverviewTab
                   id={0}
-                  contributions={data.contributions}
+                  contributions={contrib[contrib.length - 1]}
                   />
                   <ResumeTab
                   id={1}

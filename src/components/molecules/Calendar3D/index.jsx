@@ -13,7 +13,7 @@ import {
 import changeHue from '../../helpers/changeHue.js';
 
 //> Dummy data
-import dummyData from './dummydata.js';
+//import dummyData from './dummydata.js';
 
 //> CSS
 import './calendar3d.scss';
@@ -133,9 +133,10 @@ class Calender3D extends React.Component {
     // Canvas could be either DOM or jQuery element
     let pixelView = new obelisk.PixelView(this.context, point);
 
+    //> Real data
+    let contributions = this.props.contributions.contributionCalendar;
     //> Dummy data
-    // Get contribs
-    let contributions = dummyData.data.viewer.contributionsCollection.contributionCalendar;
+    //let contributions = dummyData.data.viewer.contributionsCollection.contributionCalendar;
 
     // Define basic variables
     let SIZE = 10;
@@ -190,8 +191,8 @@ class Calender3D extends React.Component {
     //console.log(this.state.contributionsList);
     return (
       <div id="calendar3d">
-        <div dangerouslySetInnerHTML={this.renderTopStats()} />
-        <div dangerouslySetInnerHTML={this.renderBottomStats()} />
+        {/*<div dangerouslySetInnerHTML={this.renderTopStats()} />
+        <div dangerouslySetInnerHTML={this.renderBottomStats()} />*/}
         <div ref={this.myInput}>
           <canvas ref={(c) => this.context = c} width={this.state.width} height="410">
           </canvas>
