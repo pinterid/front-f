@@ -38,7 +38,6 @@ import {
   TabContainer,
   Avatar,
   Socialdata,
-  ContribChart,
 } from '../../molecules';
 // Organisms
 import {
