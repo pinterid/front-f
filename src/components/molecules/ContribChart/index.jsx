@@ -15,27 +15,68 @@ class ChartsPage extends React.Component {
       datasets: [
         {
           label: "GitHub",
-          backgroundColor: "rgba(0, 126, 255, 0.3)",
-          borderColor: "rgba(0,191,255, 0.5)",
-          data: [28, 30, 60, 81]
+          backgroundColor: "rgba(255,255,255,0)",
+          borderColor: "rgb(64, 120, 192)",
+          data: [10, 15, 10, 70]
         },
         {
           label: "GitLab",
-          backgroundColor: "rgba(255, 153, 0, 0.3)",
-          borderColor: "rgba(255,140,0,0.5)",
-          data: [45, 35, 40, 19]
+          backgroundColor: "rgba(255,255,255,0)",
+          borderColor: "rgb(252, 198, 38)",
+          data: [17, 30, 25, 44]
         }
       ]
+    },
+    dataRadarOptions: {
+        responsive: true,
+        elements: {
+          line: {
+            tension: 0
+          }
+        },
+        legend: {
+          display: true,
+        },
+        scale: {
+          ticks: {
+            beginAtZero: true,
+            max: 100,
+            min: 0,
+            stepSize: 20
+          }
+        },
+        scales: {
+            yAxes: [{
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                display: false
+              }
+            }],
+            xAxes: [{
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                beginAtZero: true,
+                display: false,
+              }
+            }]
+        }
     }
-
   }
 
 
 render() {
     return (
       <MDBContainer>
-        <h3 className="mt-5">Radar chart</h3>
-        <Radar data={this.state.dataRadar} options={{ responsive: true }} />
+        <Radar 
+        data={this.state.dataRadar}
+        options={this.state.dataRadarOptions}
+        />
       </MDBContainer>
     );
   }
