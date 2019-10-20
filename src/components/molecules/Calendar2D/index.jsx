@@ -45,7 +45,6 @@ class Calender2D extends React.Component {
     window.addEventListener('resize', this.updateDimensions);
 
     let cnew = this.props.contributions.contributionCalendar;
-    console.log(cnew);
 
     this.setState({
         width: this.myInput.current.offsetWidth,

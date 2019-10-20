@@ -152,8 +152,9 @@ class Dashboard extends React.Component {
     if(gitlab && github){
       const deepMerge = require('deepmerge');
       let merged = deepMerge(gitlab.res,github.res);
+      console.log("merged",merged);
       const contribObjects = connector.getCalendarFromStructure(merged);
-      console.log("contrib",merged);
+      console.log("contrib",contribObjects);
       this.setState({
         user: {
           contrib: contribObjects,
@@ -195,16 +196,11 @@ class Dashboard extends React.Component {
     let data = this.state.user.data;
     let contrib = this.state.user.contrib;
     if(data && contrib){
-      let dataJSON = data;
-      let contribJSON = contrib;
-      if(dataJSON && contribJSON){
-        console.log(dataJSON,contribJSON);
-        this.setState({
-          data: dataJSON,
-          contrib: contribJSON,
-          loaded: true
-        });
-      }
+      this.setState({
+        data: data,
+        contrib: contrib,
+        loaded: true
+      });
     }
 
   }
@@ -267,7 +263,7 @@ class Dashboard extends React.Component {
                 <TabContainer items={tabitems} horizontal>
                   <OverviewTab
                   id={0}
-                  contributions={contrib[3]}
+                  contributions={contrib[0]}
                   />
                   <ResumeTab
                   id={1}

@@ -19,6 +19,7 @@ import {
 
 class Overview extends React.Component {
   render(){
+    console.log("Contributions:");
     console.log(this.props.contributions);
     return(
       <MDBTabPane tabId={this.props.id} role="tabpanel">

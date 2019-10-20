@@ -134,9 +134,9 @@ class Calender3D extends React.Component {
     let pixelView = new obelisk.PixelView(this.context, point);
 
     //> Real data
-    //let contributions = this.props.contributions.contributionCalendar;
+    let contributions = this.props.contributions.contributionCalendar;
     //> Dummy data
-    let contributions = dummyData.data.viewer.contributionsCollection.contributionCalendar;
+    //let contributions = dummyData.data.viewer.contributionsCollection.contributionCalendar;
 
     console.log(contributions);
 
