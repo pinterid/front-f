@@ -11,30 +11,31 @@ const formatDate = (date) => { return date.toISOString().split('T')[0] };
 // Returns a calendar structure
 export const getCalendarFromStructure = (structure) => {
     let calendar = calculateColorsForCalendarDay(structure.contributions.years);
-    return calculateCalendar(calendar, structure.createdAt);
+    return calculateCalendar(calendar);
 }
 
 // Parses the raw calendar
-const calculateCalendar = (calendar, createdAt) => {
+const calculateCalendar = (calendar) => {
     let preCalendar = calendar;
-    let fullYear = new Date(createdAt).getFullYear()
+    let fullYear = new Date(Object.keys(preCalendar)[0]).getFullYear();
     let years = [];
+    let date = null;
 
-    for (let indexY = 0; indexY < preCalendar.length; indexY++) {
-        let date = new Date(fullYear, 0, 1);
+    Object.values(preCalendar).forEach(preYear => {
+        date = new Date(fullYear, 0, 1); 
         let fullCalendar = JSON.parse(JSON.stringify(calendarStructure));
+
         for (let indexW = 0; indexW < 53; indexW++) {
             let week = JSON.parse(JSON.stringify(daysStructure));
             for (let indexD = 0; indexD <= 6; indexD++) {
-
                 let day = JSON.parse(JSON.stringify(dayStructure));
                 date.setDate(date.getDate() + 1);
                 day.date = formatDate(new Date(date));
 
                 let dayDate = formatDate(date);
                 try {
-                    day.color = preCalendar[indexY].calendar[dayDate].color;
-                    day.contributionCount = preCalendar[indexY].calendar[dayDate].total;
+                    day.color = preYear.calendar[dayDate].color;
+                    day.contributionCount = preYear.calendar[dayDate].total;
                     fullCalendar.contributionCalendar.totalContributions += day.contributionCount;
                 }
                 catch (TypeError) {
@@ -47,16 +48,14 @@ const calculateCalendar = (calendar, createdAt) => {
             fullCalendar.contributionCalendar.weeks.push(week);
         }
         fullYear++;
-
         years.push(JSON.parse(JSON.stringify(fullCalendar)));
-    }
+    })
     return years
 }
 
 // Fill the raw calendar structure with the correct colors
 const calculateColorsForCalendarDay = (rawCalendar) => {
-    rawCalendar.forEach(_year => {
-
+    Object.values(rawCalendar).forEach(_year => {
         let busiestDay = 0;
 
         // Calculate busiest day of the year
