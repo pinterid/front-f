@@ -58,8 +58,8 @@ export const githubProvider: IProvider<boolean> = {
         })
         .then(async res => await res.json())
         .then(res => {
-            window.localStorage.setItem("access_token", JSON.stringify(res.access_token))
-            window.localStorage.setItem("token_type", JSON.stringify(res.token_type))
+            window.localStorage.setItem("access_token", res.access_token)
+            window.localStorage.setItem("token_type", res.token_type)
         })
         return true
     },
