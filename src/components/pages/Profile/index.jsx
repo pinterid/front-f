@@ -32,6 +32,10 @@ import * as gitLab from '../../../utilities/GitLabUtils';
 import * as gitHub from '../../../utilities/GitHubUtils';
 import * as connector from '../../../utilities/ConnectorUtils';
 
+// OAuth
+import { githubProvider } from '../../../utilities/OAuthGitHubUtils/providers/github'
+import RSA from 'react-very-simple-oauth'
+
 //> Components
 // Molecules
 import {
@@ -97,11 +101,13 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount = () => {
+    this.getAccessTokenFromGitHub();
     this.getParams();
   }
 
   getSourceData = async () => {
     console.log("Called");
+
       let objects = []
       if(this.state.users.gitlab){
         this.state.users.gitlab.forEach(async (username)=>{
@@ -132,6 +138,23 @@ class Dashboard extends React.Component {
         })
       }
       return objects;
+  }
+
+  getAccessTokenFromGitHub = async () => {
+    if(!this.checkForAccessToken()){
+      const request = await RSA.acquireTokenAsync(githubProvider);
+      if (request){
+        console.log("Got Access_Token from GitHub!");
+      }
+    }
+  }
+
+  checkForAccessToken = () => {
+    let token = window.localStorage.getItem('access_token')
+    if(!token){
+      return false;
+    }
+    return true;
   }
 
   createData = () => {
@@ -224,8 +247,7 @@ class Dashboard extends React.Component {
 
     console.log("Checking");
     console.log(sourceDataGitHub, sourceDataGitLab);
-
-    if(sourceDataGitHub && sourceDataGitHub && !this.state.loaded){
+    if(sourceDataGitHub && sourceDataGitHub && this.checkForAccessToken() && !this.state.loaded){
       this.createData();
     }
 

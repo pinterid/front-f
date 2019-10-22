@@ -23,8 +23,9 @@ const APILink = APIHost+"/graphql";
 const LINK = new HttpLink({
   uri: APILink,
   headers: {
-    authorization: `Bearer ${
-      process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN
+    authorization: `Token ${
+      //process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN
+      window.localStorage.getItem('access_token')
     }`,
   },
 });
