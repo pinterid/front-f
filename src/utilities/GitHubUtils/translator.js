@@ -14,7 +14,6 @@ let base = null;
 
 // Works what the structure assembles
 export function getTranslatorObj(objUser) {
-  //console.log(objUser);
 
   base = JSON.parse(JSON.stringify(structure))
   let stats;
@@ -25,10 +24,8 @@ export function getTranslatorObj(objUser) {
       streak = true
       let shit = {...history}
       shit.startDate = day.date
-      //console.log(shit)
       stats.streaks.history.unshift({...shit})
 
-      //console.log(stats.streaks.history)
     }else{
       stats.streaks.history[0].endDate = day.date
     }
@@ -108,7 +105,6 @@ export function getTranslatorObj(objUser) {
         dayEntry.total = day.total;
         dayEntry.week = day.week.toString();
         dayEntry.weekday = day.weekday.toString();
-        //console.log(commits, issues)
         if(commits[day.date]){
           dayEntry.contributions.commits = commits[day.date]
           //contributionYear.stats['commits'] += commits[day.date].length
@@ -132,7 +128,6 @@ export function getTranslatorObj(objUser) {
 
       
       if(!contributionYear.calendar){
-        console.log(contributionYear)
         let bdarray = Object.values(contributionYear.calendar)
         contributionYear.stats.busiestDay = bdarray.reduce((a,b)=>a.total>b.total?a:b);
         contributionYear.stats.average = bdarray.reduce((a,b)=>a.total+b.total);
@@ -147,7 +142,6 @@ export function getTranslatorObj(objUser) {
     for (let c = 1; c < calendar.length; c++) {
       const reposi = objUser.calendar[`c${c}`].commitContributionsByRepository
         yield reposi.map( _repo => {
-            //console.log(_repo);
 
             let rep = {...repos}
             rep.avatarUrl = null
@@ -201,12 +195,7 @@ export function getTranslatorObj(objUser) {
     });
     base.organizations.push(JSON.parse(JSON.stringify(organization)));
   });
-
-  /*
-  base.contributions.years = Array.from(
-    genContributionYears (Object.values(objUser.calendar))
-  );
-*/
+  
   base.repos = Array.from(
     genRepositories (Object.values(objUser.calendar))
   ).flat();
@@ -219,5 +208,3 @@ export function getTranslatorObj(objUser) {
 
   return base;
 }
-
-//console.log(structure);

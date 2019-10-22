@@ -49,8 +49,8 @@ const calculateCalendar = (calendar) => {
         }
         fullYear++;
         years.push(JSON.parse(JSON.stringify(fullCalendar)));
-    })
-    return years
+    });
+    return years;
 }
 
 // Fill the raw calendar structure with the correct colors
@@ -63,7 +63,7 @@ const calculateColorsForCalendarDay = (rawCalendar) => {
             if (_day.total > busiestDay) {
                 busiestDay = _day.total;
             }
-        })
+        });
 
         Object.values(_year.calendar).forEach(_day => {
             let precision = _day.total / busiestDay;
@@ -78,7 +78,7 @@ const calculateColorsForCalendarDay = (rawCalendar) => {
             } else if (precision === 0) {
                 _day.color = "#ebedf0";
             }
-        })
-    })
+        });
+    });
     return rawCalendar;
 }
