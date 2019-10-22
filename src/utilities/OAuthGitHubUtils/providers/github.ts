@@ -12,7 +12,7 @@ export const githubProvider: IProvider<boolean> = {
         return `https://github.com/login/oauth/authorize?redirect_uri=${redirect_uri}        
         &client_id=${client_id}
         &client_secret=${client_secret}
-        &scope=repo
+        &scope=repo, user:email, read:user, read:org
         &state=${state}`
     },
 
