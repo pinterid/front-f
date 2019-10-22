@@ -15,7 +15,7 @@ export const structure = {
   organizations: [],
   repos: [],
   contributions: {
-    years: []
+    years: {}
   }
 };
 

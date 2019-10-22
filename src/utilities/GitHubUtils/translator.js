@@ -97,6 +97,7 @@ export function getTranslatorObj(objUser) {
       }, {})
 
       var contributionYear = JSON.parse(JSON.stringify(yearEntry));
+      contributionYear.contributionYears = objUser.calendar[`c${c}`].contributionYears;
       contributionYear.stats['commits'] = 0
       contributionYear.stats['issues'] = 0
       contributionYear.stats['pullRequests'] = 0
@@ -104,9 +105,9 @@ export function getTranslatorObj(objUser) {
       let dayEntry = null;
       for (const day of genContributionDays(objUser.calendar[`c${c}`])) {
         dayEntry = JSON.parse(JSON.stringify(calendarEntry));
-        dayEntry.total = day.total
-        dayEntry.week = day.week
-        dayEntry.weekday = day.weekday
+        dayEntry.total = day.total;
+        dayEntry.week = day.week.toString();
+        dayEntry.weekday = day.weekday.toString();
         //console.log(commits, issues)
         if(commits[day.date]){
           dayEntry.contributions.commits = commits[day.date]
@@ -201,13 +202,20 @@ export function getTranslatorObj(objUser) {
     base.organizations.push(JSON.parse(JSON.stringify(organization)));
   });
 
+  /*
   base.contributions.years = Array.from(
     genContributionYears (Object.values(objUser.calendar))
   );
-
+*/
   base.repos = Array.from(
     genRepositories (Object.values(objUser.calendar))
   ).flat();
+
+  let year = new Date(base.createdAt).getFullYear();
+  for(let e of genContributionYears (Object.values(objUser.calendar))) {
+    base.contributions.years[year] = e;
+    year++;
+  }
 
   return base;
 }

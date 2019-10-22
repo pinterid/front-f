@@ -15,7 +15,7 @@ export const structure = {
   organizations: [],
   repos: [],
   contributions: {
-    years: []
+    years: {}
   }
 };
 
@@ -30,7 +30,7 @@ export const members = {
   avatarUrl: "",
   name: "",
   username: "",
-  webUrl: ""
+  url: ""
 };
 
 export const repos = {
@@ -41,7 +41,7 @@ export const repos = {
     avatarUrl: "",
     name: "",
     username: "",
-    webUrl: ""
+    url: ""
   },
   members: [],
   languagesPie: {
@@ -85,7 +85,7 @@ export const yearEntry = {
       count: ""
     },
     average: "",
-    streak: {
+    streaks: {
       currentStreak: {
         startDate: "",
         endDate: "",
@@ -122,7 +122,7 @@ export const calendarEntry = {
 };
 
 export const contribution = {
-  time: "",
+  datetime: "",
   nameWithOwner: "",
   repoUrl: "",
   additions: "",

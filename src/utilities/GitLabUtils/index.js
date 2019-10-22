@@ -110,7 +110,7 @@ const getMember = async (username) => {
     member.name = name;
     member.username = username;
     member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
-    member.webUrl = `https://${data.platformUrl}/${username}`;
+    member.url = `https://${data.platformUrl}/${username}`;
 
     return member;
   });
@@ -228,7 +228,7 @@ export const get = async (server, username) => {
             .getElementsByClassName("event-scope")[0]
             .getElementsByTagName("a")[0]
             .getAttribute("href");
-          contrib.time = time.split("T")[1];
+          contrib.datetime = time;
           contrib.nameWithOwner = nameWithOwner.substring(1);
           contrib.repoUrl = `https://${base.platformUrl}/${contrib.nameWithOwner}`;
 
@@ -280,7 +280,7 @@ export const get = async (server, username) => {
       const limit = "2147483647";
       const url = `https://${base.platformUrl}/${username}?limit=${limit}`;
 
-      let _years = [];
+      let _years = {};
       const years = await parseJsonToDOM(fetchJson(url)).then(async (res) => {
         let commits = await getCommits(res);
         let issues = await getIssues(res);
@@ -293,7 +293,7 @@ export const get = async (server, username) => {
           currentYear++
         ) {
           let year = JSON.parse(JSON.stringify(yearEntry));
-          year.stats.streak.currentStreak = "2001-01-01";
+          year.stats.streaks.currentStreak = "2001-01-01";
           var contributionsPerYear = (contributions) => {
             return keyMatch(contributions, new RegExp("^" + currentYear));
           };
@@ -308,8 +308,8 @@ export const get = async (server, username) => {
                 cEntry = year.calendar[key];
               }
 
-              cEntry.week = new Date(key).getWeekNumber();
-              cEntry.weekday = new Date(key).getDay();
+              cEntry.week = new Date(key).getWeekNumber().toString();
+              cEntry.weekday = new Date(key).getDay().toString();
 
               let repos = [];
               for (let [cKey, contribution] of Object.entries(
@@ -345,7 +345,7 @@ export const get = async (server, username) => {
           fill(contributionsPerYear(issues), "issues");
           fill(contributionsPerYear(pullRequests), "pullRequests");
 
-          _years.push(year);
+          _years[currentYear] = year;
         }
 
         return _years;
