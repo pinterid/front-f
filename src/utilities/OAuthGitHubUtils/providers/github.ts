@@ -4,12 +4,12 @@ import { IProvider } from 'react-very-simple-oauth'
 const client_id = '2148629809594d57c113'
 const client_secret = '64a37e4846387cfcaea35d83afca3c9c8689628c'
 const state = guid()
-const redirect_uri = encodeURIComponent(`http://snek.at/oauth/redirect`)
+const redirect_uri = encodeURIComponent(`https://snek.at/oauth/redirect`)
 const proxyUrl = ''
 
 export const githubProvider: IProvider<boolean> = {
     buildAuthorizeUrl(): string {
-        return `https://github.com/login/oauth/authorize?redirect_uri=${redirect_uri}        
+        return `https://github.com/login/oauth/authorize?redirect_uri=${redirect_uri}
         &client_id=${client_id}
         &client_secret=${client_secret}
         &scope=repo, user:email, read:user, read:org
