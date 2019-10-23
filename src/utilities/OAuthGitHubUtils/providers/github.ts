@@ -4,8 +4,8 @@ import { IProvider } from 'react-very-simple-oauth'
 const client_id = '2148629809594d57c113'
 const client_secret = '64a37e4846387cfcaea35d83afca3c9c8689628c'
 const state = guid()
-const redirect_uri = encodeURIComponent(`http://localhost:3000/oauth/redirect`)
-const proxyUrl = 'https://c-hive-proxy.herokuapp.com/'
+const redirect_uri = encodeURIComponent(`http://snek.at/oauth/redirect`)
+const proxyUrl = ''
 
 export const githubProvider: IProvider<boolean> = {
     buildAuthorizeUrl(): string {
