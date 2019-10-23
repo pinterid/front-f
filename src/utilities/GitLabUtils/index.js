@@ -65,8 +65,8 @@ var keyMatch = function(o, r) {
 //> Send request functions
 // Fetch JSON from url
 const fetchJson = (urlIn) => {
-  const proxy = "https://c-hive-proxy.herokuapp.com/";
-
+  //const proxy = "https://c-hive-proxy.herokuapp.com/";
+  const proxy = "";
   const url = `${proxy}${urlIn}`;
   return fetch(url, {
     headers: {
@@ -81,8 +81,8 @@ const fetchJson = (urlIn) => {
 };
 // Fetch HTML from url
 const fetchHtml = (urlIn) => {
-  const proxy = "https://c-hive-proxy.herokuapp.com/";
-
+  //const proxy = "https://c-hive-proxy.herokuapp.com/";
+  const proxy = "";
   const url = `${proxy}${urlIn}`;
   return fetch(url, {
     headers: {
