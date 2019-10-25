@@ -50,20 +50,32 @@ class Calender3D extends React.Component {
   }
 
   renderTopStats() {
+    // Log stats
+    console.log(this.props.data.years[2019].stats);
 
-    
-    console.log(this.props.data.years[2019].stats)
+    let contrib = this.props.contributions;
     let data = this.props.data.years[2019].stats;
     let countTotal, averageCount, datesTotal, maxCount, dateBest;
 
-    countTotal = parseInt(data.commits.total) + 
-      parseInt(data.issues.total) + 
-      parseInt(data.codeReviews.total) + 
-      parseInt(data.pullRequests.total);
+    countTotal = parseInt(data.commits) + 
+      parseInt(data.issues) + 
+      parseInt(data.codeReviews) + 
+      parseInt(data.pullRequests);
     averageCount = data.average;
-    datesTotal = "Oct 7, 2018 - Oct 9, 2019";
-    maxCount = data.busiestDay;
-    dateBest = "Aug 14";
+
+    let weeks = contrib.contributionCalendar.weeks;
+    datesTotal = moment(weeks[0].contributionDays[0].date).format("MMM")+" "+
+    moment(weeks[0].contributionDays[0].date).format("DD")+", "+
+    moment(weeks[0].contributionDays[0].date).format("YYYY")+" - "+
+    moment(weeks[weeks.length - 1].contributionDays[weeks[weeks.length - 1].
+    contributionDays.length - 1].date).format("MMM")+" "+
+    moment(weeks[weeks.length - 1].contributionDays[weeks[weeks.length - 1].
+    contributionDays.length - 1].date).format("DD")+", "+
+    moment(weeks[weeks.length - 1].contributionDays[weeks[weeks.length - 1].
+    contributionDays.length - 1].date).format("YYYY");
+    
+    maxCount = data.busiestDay.count;
+    dateBest = moment(data.busiestDay).format("MMM");
 
     // Dummy data
 
