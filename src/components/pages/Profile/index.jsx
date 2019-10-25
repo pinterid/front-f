@@ -283,7 +283,7 @@ class Dashboard extends React.Component {
                 <TabContainer items={tabitems} horizontal>
                   <OverviewTab
                   id={0}
-                  contributions={contrib[contrib.length - 1]}
+                  contributions={contrib[0]}
                   />
                   <ResumeTab
                   id={1}
