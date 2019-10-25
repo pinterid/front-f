@@ -101,8 +101,37 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount = () => {
+    // Get oAuth token
     this.getAccessTokenFromGitHub();
+    // Get the parameters from sources
     this.getParams();
+  }
+
+  getParams = () => {
+    const params = this.props.location.search;
+
+    let qs = queryString.parse(this.props.location.search, { ignoreQueryPrefix: true });
+    let paramGitHub = qs.github;
+    let paramGitLab = qs.gitlab;
+
+    let usersGitHub = undefined;
+    let usersGitLab = undefined;
+
+    if(paramGitHub){
+      usersGitHub = paramGitHub.split(' ');
+    }
+    if(paramGitLab){
+      usersGitLab = paramGitLab.split(' ');
+    }
+
+    console.log(usersGitHub, usersGitLab);
+
+    this.setState({
+      users: {
+        gitlab: usersGitLab ? usersGitLab : undefined,
+        github: usersGitHub ? usersGitHub : undefined,
+      }
+    }, () => this.getSourceData())
   }
 
   getSourceData = async () => {
@@ -167,10 +196,15 @@ class Dashboard extends React.Component {
     * .get('<GitLab server>', '<username>')
     * .then(res => console.log(res));
     */
+
+    console.log("Both states set");
     
 
     let gitlab = this.state.sourceDataGitLab;
     let github = this.state.sourceDataGitHub;
+
+    console.log("gitlab",gitlab?true:false);
+    console.log("github",github?true:false);
 
     if(gitlab && github){
       const deepMerge = require('deepmerge');
@@ -185,34 +219,27 @@ class Dashboard extends React.Component {
           loaded: true,
         }
       }, () => this.fetchData());
+    } else if(gitlab){
+      const contribObjects = connector.getCalendarFromStructure(gitlab.res);
+
+      this.setState({
+        user: {
+          contrib: contribObjects,
+          data: gitlab.res,
+          loaded: true,
+        }
+      }, () => this.fetchData());
+    } else if(github){
+      const contribObjects = connector.getCalendarFromStructure(github.res);
+
+      this.setState({
+        user: {
+          contrib: contribObjects,
+          data: github.res,
+          loaded: true,
+        }
+      }, () => this.fetchData());
     }
-  }
-
-  getParams = () => {
-    const params = this.props.location.search;
-
-    let qs = queryString.parse(this.props.location.search, { ignoreQueryPrefix: true });
-    let paramGitHub = qs.github;
-    let paramGitLab = qs.gitlab;
-
-    let usersGitHub = undefined;
-    let usersGitLab = undefined;
-
-    if(paramGitHub){
-      usersGitHub = paramGitHub.split(' ');
-    }
-    if(paramGitLab){
-      usersGitLab = paramGitLab.split(' ');
-    }
-
-    console.log(usersGitHub, usersGitLab);
-
-    this.setState({
-      users: {
-        gitlab: usersGitLab ? usersGitLab : undefined,
-        github: usersGitHub ? usersGitHub : undefined,
-      }
-    }, () => this.getSourceData())
   }
 
   fetchData = async () => {
@@ -243,11 +270,11 @@ class Dashboard extends React.Component {
       contrib = this.state.user.contrib;
     }
 
-    console.log(data, contrib);
+    console.log(this.state);
 
     console.log("Checking");
     console.log(sourceDataGitHub, sourceDataGitLab);
-    if(sourceDataGitHub && sourceDataGitHub && this.checkForAccessToken() && !this.state.loaded){
+    if(this.checkForAccessToken() && !this.state.loaded){
       this.createData();
     }
 
