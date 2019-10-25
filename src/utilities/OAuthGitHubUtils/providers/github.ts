@@ -2,7 +2,7 @@ import { guid } from '../services/utilities'
 import { IProvider } from 'react-very-simple-oauth'
 
 const client_id = process.env.REACT_APP_GITHUB_CLIENT_ID;
-const client_secret = process.env.REACT_APP_GITHUB_CLIENT_SECRET
+const client_secret = process.env.REACT_APP_GITHUB_CLIENT_SECRET;
 const state = guid()
 const redirect_uri = encodeURIComponent(`http://localhost:3000/oauth/redirect`)
 const proxyUrl = 'https://c-hive-proxy.herokuapp.com/'
