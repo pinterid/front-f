@@ -256,9 +256,7 @@ class Dashboard extends React.Component {
 
     if(data && contrib){
       return (
-        
         <div id="profile">
-          
           <MDBContainer className="pt-5">
             <MDBRow>
               <MDBCol md="4" className="text-center">
