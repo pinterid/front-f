@@ -50,7 +50,7 @@ const calculateCalendar = (calendar) => {
         fullYear++;
         years.push(JSON.parse(JSON.stringify(fullCalendar)));
     });
-    return years;
+    return years.reverse();
 }
 
 // Fill the raw calendar structure with the correct colors
