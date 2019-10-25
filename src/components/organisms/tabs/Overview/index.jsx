@@ -30,6 +30,7 @@ class Overview extends React.Component {
         />
         <Calendar3D 
         contributions={this.props.contributions}
+        data={this.props.data}
         />
         <ContribChart />
         </>

@@ -18,6 +18,9 @@ import dummyData from './dummydata.js';
 //> CSS
 import './calendar3d.scss';
 
+//> Date lib
+const moment = require('moment');
+
 class Calender3D extends React.Component {
   constructor(props) {
     super(props);
@@ -47,7 +50,10 @@ class Calender3D extends React.Component {
   }
 
   renderTopStats() {
-    let data = this.props.contributions.years[0].stats;
+
+    
+    console.log(this.props.data.years[2019].stats)
+    let data = this.props.data.years[2019].stats;
     let countTotal, averageCount, datesTotal, maxCount, dateBest;
 
     countTotal = parseInt(data.commits.total) + 
@@ -90,12 +96,28 @@ class Calender3D extends React.Component {
   }
 
   renderBottomStats() {
+    let data = this.props.data.years[2019].stats.streaks;
     let streakLongest, datesLongest, streakCurrent, datesCurrent;
 
-    streakLongest = "46";
-    datesLongest = "Jul 30 - Sep 13";
-    streakCurrent = "5";
-    datesCurrent = "Oct 5 - Oct 9";
+    // Get dates for longest streak
+    let longest = {
+      start: moment(data.longestStreak.startDate).format("MMM") + " " + 
+      moment(data.longestStreak.startDate).format("DD"),
+      end: moment(data.longestStreak.endDate).format("MMM") + " " + 
+      moment(data.longestStreak.endDate).format("DD")
+    }
+    // Get dates for current streak
+    let current = {
+      start: moment(data.currentStreak.startDate).format("MMM") + " " + 
+      moment(data.currentStreak.startDate).format("DD"),
+      end: moment(data.currentStreak.endDate).format("MMM") + " " + 
+      moment(data.currentStreak.endDate).format("DD")
+    }
+
+    streakLongest = data.longestStreak.total;
+    datesLongest = longest.start+" - "+longest.end;
+    streakCurrent = data.currentStreak.total;
+    datesCurrent = current.start+" - "+current.end;
 
     let html;
     html = `<div class="ic-stats-block ic-stats-bottom">\n
@@ -193,8 +215,8 @@ class Calender3D extends React.Component {
     //console.log(this.state.contributionsList);
     return (
       <div id="calendar3d">
-        {/*<div dangerouslySetInnerHTML={this.renderTopStats()} />
-        <div dangerouslySetInnerHTML={this.renderBottomStats()} />*/}
+        <div dangerouslySetInnerHTML={this.renderTopStats()} />
+        <div dangerouslySetInnerHTML={this.renderBottomStats()} />
         <div ref={this.myInput}>
           <canvas ref={(c) => this.context = c} width={this.state.width} height="410">
           </canvas>

@@ -311,6 +311,7 @@ class Dashboard extends React.Component {
                   <OverviewTab
                   id={0}
                   contributions={contrib[0]}
+                  data={data.contributions}
                   />
                   <ResumeTab
                   id={1}
