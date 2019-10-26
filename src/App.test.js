@@ -9,3 +9,13 @@ import * as gitLab from './utilities/GitLabUtils';
  * .get('<GitLab server>', '<username>')
  * .then(res => console.log(res));
  */
+
+import * as intel from './intel'
+
+/*> Intel
+ * Usage:
+ * intel.testCall()
+ */
+
+
+ 
