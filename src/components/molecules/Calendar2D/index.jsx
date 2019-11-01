@@ -20,27 +20,27 @@ const months = [
 ]
 
 class Calender2D extends React.Component {
-  constructor(props) {
+    constructor(props) {
     super(props);
     this.myInput = React.createRef();
 
     this.state = {
-      width: 0,
-      hue: 0,
+        width: 0,
+        hue: 0,
     }
-  }
+    }
 
-  updateDimensions = () => {
+    updateDimensions = () => {
     this.setState({ 
-      width: this.myInput.current.offsetWidth,
+            width: this.myInput.current.offsetWidth,
     });
-  };
+    };
 
-  componentWillUnmount() {
+    componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
-  }
+    }
 
-  componentDidMount = () => {
+    componentDidMount = () => {
     // Add resize listener
     window.addEventListener('resize', this.updateDimensions);
 
@@ -55,28 +55,31 @@ class Calender2D extends React.Component {
 
     // Color RGB cycling
     //let intervalID = window.setInterval(this.cycleHue, 70);
-  }
 
-  cycleHue = () => {
+    
+    }
+
+    cycleHue = () => {
     if(this.state.hue > 365){
-      this.setState({
-      hue: 0
-      });
+        this.setState({
+        hue: 0
+        });
     }
     this.setState({
-      hue: this.state.hue + 1
+        hue: this.state.hue + 1
     });
-  }
-
-  countContribs = () => {
-    if(this.state.contributionsList){
-      return this.state.contributionsList.totalContributions;
-    } else {
-      return null;
     }
-  }
 
-  getEachMonth = (pos) => {
+    countContribs = () => {
+    if(this.state.contributionsList){
+        return this.state.contributionsList.totalContributions;
+    } else {
+        return null;
+    }
+    
+    }
+
+    getEachMonth = (pos) => {
     // Create new empty array
     let month = new Array();
 
@@ -110,70 +113,72 @@ class Calender2D extends React.Component {
     month[23] = "Dec";
     
     return month[current+pos];
-  }
-  
-  render() {
-  //console.log(this.state);
-  //console.log(this.state.contributionsList);
-  return (
-    <div id="calendar2d">
-      <div className="text-right">
-          <h3 className="font-weight-bold d-inline-block">{this.countContribs()}</h3>
-          <span> contributions in the last year</span>
-      </div>
-      <MDBRow className="text-center">
-      {months.map((month, key) => {
-          return(
-          <MDBCol size="months" key={key}>
-              <small>{this.getEachMonth(key)}</small>
-          </MDBCol>
-          );
-      })}          
-      </MDBRow>
-      <div ref={this.myInput}>
-        <svg className="calendar" height={this.state.width/53*7}>
-        {this.state.contributionsList && this.state.contributionsList.weeks.map((week, wkey) => {
-          return(
-          week.map((day, dkey) => {
-              if(wkey === 0){
-              return(
-                  <rect
-                  key={wkey+"-"+dkey}
-                  y={(this.state.width/53*7) + this.state.width/53*dkey - (week.length * (this.state.width/53))}
-                  x={0}
-                  width={this.state.width/53}
-                  height={this.state.width/53}
-                  data-data={day.date}
-                  data-count={day.total}
-                  fill={changeHue(day.color,this.state.hue)}
-                  >
-                  
-                  </rect>
-              );
-              } else {
-              return(
-                  <rect
-                  key={wkey+"-"+dkey}
-                  y={this.state.width/53*dkey}
-                  x={this.state.width/53*wkey}
-                  width={this.state.width/53}
-                  height={this.state.width/53}
-                  data-data={day.date}
-                  data-count={day.total}
-                  fill={changeHue(day.color,this.state.hue)}
-                  >
-                  
-                  </rect>
-              );
-              }
-              })
+    }
+    
+    render() {
+    //console.log(this.state);
+    //console.log(this.state.contributionsList);
+    return (
+        <div id="calendar2d">
+        <div className="text-right">
+            <h3 className="font-weight-bold d-inline-block">{this.countContribs()}</h3>
+            <span> contributions in the last year</span>
+        </div>
+        <MDBRow className="text-center">
+        {months.map((month, key) => {
+            return(
+            <MDBCol size="months" key={key}>
+                <small>{this.getEachMonth(key)}</small>
+            </MDBCol>
             );
-        })}
-        </svg>
-      </div>
-    </div>
-  );
-  }
+        })}          
+        </MDBRow>
+        <div ref={this.myInput}>
+            <svg className="calendar" height={this.state.width/53*7}>
+            {this.state.contributionsList && this.state.contributionsList.weeks.map((week, wkey) => {
+                return(
+                week.map((day, dkey) => {
+                    if(wkey === 0){
+                    return(
+                        <rect
+                        key={wkey+"-"+dkey}
+                      y={(this.state.width/53*7) + this.state.width/53*dkey - (week.length * (this.state.width/53))}
+                        x={0}
+                        width={this.state.width/53}
+                        height={this.state.width/53}
+                        data-data={day.date}
+                        data-count={day.total}
+                        fill={changeHue(day.color,this.state.hue)}
+                        >
+                        
+                        </rect>
+                    )
+                    } else {
+                    return(
+                        <rect
+                        key={wkey+"-"+dkey}
+                        y={this.state.width/53*dkey}
+                        x={this.state.width/53*wkey}
+                        width={this.state.width/53}
+                        height={this.state.width/53}
+                        data-data={day.date}
+                        data-count={day.total}
+                        fill={changeHue(day.color,this.state.hue)}
+                        >
+                        
+                        </rect>
+                    )
+                    }
+                    
+                    })
+                )
+            })}
+            
+            </svg>
+        </div>
+        </div>
+    )
+    }
 }
 export default Calender2D;
 

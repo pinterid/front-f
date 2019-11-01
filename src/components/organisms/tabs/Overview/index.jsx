@@ -6,35 +6,26 @@ import React from 'react';
 //> MDB
 // "Material Design for Bootstrap" is a great UI design framework
 import {
-  MDBTabPane,
+    MDBTabPane,
 } from 'mdbreact';
 
 //> Components
 // Molecules
 import {
-  Calendar2D,
-  Calendar3D,
+    Calendar2D,
 } from '../../../molecules';
 
 class Overview extends React.Component {
-  render(){
-    return(
-      <MDBTabPane tabId={this.props.id} role="tabpanel">
-      {this.props.contributions &&
-        <>
-        {this.props.contributions.weeks &&
-          <Calendar2D
-          contributions={this.props.contributions}
-          />
-        }
-        <Calendar3D 
-        contributions={this.props.contributions}
-        />
-        </>
-      }
-      </MDBTabPane>
-    );
-  }
+    
+    render(){
+        return(
+            <MDBTabPane tabId={this.props.id} role="tabpanel">
+                <Calendar2D
+                contributions={this.props.contributions}
+                />
+            </MDBTabPane>
+        )
+    }
 }
 
 export default Overview;
