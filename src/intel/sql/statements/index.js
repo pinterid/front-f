@@ -8,7 +8,7 @@ const init_platform = `
     websiteUrl VARCHAR(2048) NOT NULL,
     company VARCHAR(80) NOT NULL,
     email VARCHAR(254) NOT NULL,
-    name VARCHAR(80) NOT NULL,
+    fullName VARCHAR(80) NOT NULL,
     createdAt DATE NOT NULL,
     location VARCHAR(80) NULL,
     statusMessage VARCHAR(80) NULL,
@@ -99,28 +99,15 @@ const init_busiestDay = `
     PRIMARY KEY (id)
   );
 `;
-const init_streak = `
-  DROP TABLE IF EXISTS streak ;
-  CREATE TABLE IF NOT EXISTS streak (
-    id INT NOT NULL,
-    startDate VARCHAR(45) NULL,
-    endDate VARCHAR(45) NULL,
-    total VARCHAR(45) NULL,
-    statistic_id INT NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_streak_statistic1
-      FOREIGN KEY (statistic_id)
-      REFERENCES statistic (id)
-  );
-`;
 const init_statistic = `
   DROP TABLE IF EXISTS statistic;
   CREATE TABLE IF NOT EXISTS statistic (
     id INT NOT NULL AUTO_INCREMENT,
+    year INT NOT NULL,
     busiestDay_id INT NOT NULL,
-    streakHistory_id INT NOT NULL,
-    current_streak_id INT NOT NULL,
-    longest_streak_id INT NOT NULL,
+    platform_id INT NOT NULL,
+    current_streak_id INT NULL,
+    longest_streak_id INT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_statistic_busiestDay1
       FOREIGN KEY (busiestDay_id)
@@ -130,34 +117,42 @@ const init_statistic = `
       REFERENCES streak (id),
     CONSTRAINT fk_statistic_streak2
       FOREIGN KEY (longest_streak_id)
-      REFERENCES streak (id)
+      REFERENCES streak (id),
+    CONSTRAINT fk_statistic_platform
+      FOREIGN KEY (platform_id)
+      REFERENCES platform (id)
   );
 `;
-const init_calendar = `
-  DROP TABLE IF EXISTS calendar;
-  CREATE TABLE IF NOT EXISTS calendar (
+
+const init_streak = `
+  DROP TABLE IF EXISTS streak ;
+  CREATE TABLE IF NOT EXISTS streak (
     id INT NOT NULL AUTO_INCREMENT,
-    year DATE NOT NULL,
+    startDate DATE NULL,
+    endDate DATE NULL,
+    total INT NULL,
     statistic_id INT NOT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT fk_calendar_statistic1
+    CONSTRAINT fk_streak_statistic1
       FOREIGN KEY (statistic_id)
       REFERENCES statistic (id)
   );
 `;
-const init_collection = `
-  DROP TABLE IF EXISTS collection;
-  CREATE TABLE IF NOT EXISTS collection (
+
+const init_calendar = `
+  DROP TABLE IF EXISTS calendar;
+  CREATE TABLE IF NOT EXISTS calendar (
     id INT NOT NULL AUTO_INCREMENT,
-    calendar_id INT NOT NULL,
+    date DATE NOT NULL,
+    week INT NOT NULL,
+    weekday INT NOT NULL,
+    total INT NOT NULL,
+    color VARCHAR(7) NULL,
     platform_id INT NOT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT fk_collection_calendar1
-      FOREIGN KEY (calendar_id)
-      REFERENCES calendar (id),
-    CONSTRAINT fk_collection_platform1
+    CONSTRAINT fk_calendar_platform1
       FOREIGN KEY (platform_id)
-      REFERENCES platform (id)    
+      REFERENCES platform (id)
   );
 `;
 const init_contrib = `
@@ -165,51 +160,21 @@ const init_contrib = `
   CREATE TABLE IF NOT EXISTS contrib (
     id INT NOT NULL AUTO_INCREMENT,
     datetime DATETIME NOT NULL,
-    nameWithOwner TINYTEXT NOT NULL,
-    repoUrl TINYTEXT NOT NULL,
+    nameWithOwner VARCHAR(255) NOT NULL,
+    repoUrl VARCHAR(255) NOT NULL,
     additions INT NULL,
     deletions INT NULL,
     changedFiles INT NULL,
-    type TINYTEXT NOT NULL,
-    languageSlice_id INT UNSIGNED NULL,
+    type VARCHAR(255) NOT NULL,
+    languageSlice_id INT NOT NULL,
+    calendar_id INT NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_contrib_languageSlice1
       FOREIGN KEY (languageSlice_id)
-      REFERENCES languageSlice (id)
-  );
-`;
-const init_calendarEntry = `
-  DROP TABLE IF EXISTS calendarEntry ;
-  CREATE TABLE IF NOT EXISTS calendarEntry (
-    id INT NOT NULL AUTO_INCREMENT,
-    date DATE NOT NULL,
-    week INT NOT NULL,
-    weekday INT NOT NULL,
-    total INT NOT NULL,
-    color TINYTEXT NULL,
-    calendar_id INT NOT NULL,
-    contrib_id INT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_calendarEntry_calendar1
+      REFERENCES languageSlice (id),
+    CONSTRAINT fk_contrib_calendar1
       FOREIGN KEY (calendar_id)
-      REFERENCES calendar (id),
-    CONSTRAINT fk_calendarEntry_contrib1
-      FOREIGN KEY (contrib_id)
-      REFERENCES contrib (id)    
-  );
-`;
-const init_contribStatistic = `
-  DROP TABLE IF EXISTS contribStatistic ;
-  CREATE TABLE IF NOT EXISTS contribStatistic (
-    id INT NOT NULL AUTO_INCREMENT,
-    average FLOAT NOT NULL,
-    longestStreak INT NOT NULL,
-    currentStreak INT NOT NULL,
-    statistic_id INT NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_contribStatistic_statistic1
-      FOREIGN KEY (statistic_id)
-      REFERENCES statistic (id)  
+      REFERENCES calendar (id)
   );
 `;
 const init_organization_has_member = `
@@ -269,6 +234,179 @@ const init_platform_has_repository = `
   );
 `;
 
+//> Insert statements
+// Basic
+
+export const create_platform = `
+INSERT INTO platform(
+  name,
+  url,
+  avatarUrl,
+  websiteUrl,
+  company,
+  email,
+  fullName,
+  createdAt,
+  location,
+  statusMessage,
+  statusEmojiHTML
+)
+VALUES (?,?,?,?,?,?,?,?,?,?,?)
+`;
+
+export const create_organization = `
+INSERT INTO organization(
+  avatarUrl,
+  name,
+  url
+)
+VALUES (?,?,?)
+`;
+
+export const create_member = `
+INSERT INTO member(
+  avatarUrl,
+  name,
+  username,
+  url
+)
+VALUES (?,?,?,?)
+`;
+
+export const create_languagePie = `
+INSERT INTO languagePie(
+  size,
+  total
+)
+VALUES (?,?)
+`;
+
+export const create_repository = `
+INSERT INTO repository(
+  avatarUrl,
+  name,
+  member_id,
+  languagePie_id
+)
+VALUES (?,?,?,?)
+`;
+
+export const create_languageSlice = `
+INSERT INTO languageSlice(
+  size,
+  total,
+  pie_id
+)
+VALUES (?,?,?)
+`;
+
+export const create_languageCrumb = `
+INSERT INTO languageCrumb(
+  name,
+  size,
+  color,
+  slice_id
+)
+VALUES (?,?,?,?)
+`;
+
+export const create_busiestDay = `
+INSERT INTO busiestDay(
+  date,
+  total
+)
+VALUES (?,?)
+`;
+
+export const create_statistic = `
+INSERT INTO statistic(
+  year,
+  busiestDay_id,
+  platform_id
+)
+VALUES (?,?,?)
+`;
+
+export const create_streak = `
+INSERT INTO streak(
+  startDate,
+  endDate,
+  total,
+  statistic_id
+)
+VALUES (?,?,?,?)
+`;
+
+export const create_calendar = `
+INSERT INTO calendar(
+  date,
+  week,
+  weekday,
+  total,
+  color,
+  platform_id
+)
+VALUES (?,?,?,?,?,?)
+`;
+
+export const create_contrib = `
+INSERT INTO contrib(
+  datetime,
+  nameWithOwner,
+  repoUrl,
+  additions,
+  deletions,
+  changedFiles,
+  type,
+  languageSlice_id,
+  calendar_id
+)
+VALUES (?,?,?,?,?,?,?,?,?)
+`;
+
+// Mappings
+export const map_platform_has_organization = `
+INSERT INTO platform_has_organization(
+  platform_id,
+  organization_id
+)
+VALUES (?,?)
+`;
+
+export const map_platform_has_repository = `
+INSERT INTO platform_has_repository(
+  platform_id,
+  repository_id
+)
+VALUES (?,?)
+`;
+
+export const map_organization_has_member = `
+INSERT INTO organization_has_member(
+  organization_id,
+  member_id
+)
+VALUES (?,?)
+`;
+
+export const map_repository_has_member = `
+INSERT INTO repository_has_member(
+  repository_id,
+  member_id
+)
+VALUES (?,?)
+`;
+
+export const update_statistic_current_streak= `
+UPDATE statistic SET current_streak_id = ? WHERE name = ?
+`;
+
+export const update_statistic_longest_streak= `
+UPDATE statistic
+  SET longest_streak_id=?
+  WHERE id=?
+`;
+
 export const init_tables = `
   ${init_platform}
   ${init_organization}
@@ -278,13 +416,10 @@ export const init_tables = `
   ${init_languageSlice}
   ${init_languageCrumb}
   ${init_busiestDay}
-  ${init_streak}
   ${init_statistic}
+  ${init_streak}
   ${init_calendar}
-  ${init_collection}
   ${init_contrib}
-  ${init_calendarEntry}
-  ${init_contribStatistic}
   ${init_organization_has_member}
   ${init_repository_has_member}
   ${init_platform_has_organization}
