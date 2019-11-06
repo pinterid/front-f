@@ -3,6 +3,9 @@ var alasql = require('alasql');
 
 export const Database = () => {
   let db = new alasql.Database('dummyDb');
+  const count = (table) => db.exec(`SELECT COUNT(*) FROM ${table}`)[0]['COUNT(*)'];
+  const random = (base) => Math.floor(Math.random() * base) + 1;
+  const randomBtw = (max, min) => Math.floor(Math.random() * (+max - +min)) + +min;
 
   // Init tables
   db.exec(statements.init_tables)
