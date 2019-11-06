@@ -3,13 +3,14 @@ var alasql = require('alasql');
 var faker = require('faker');
 
 export const Database = () => {
-  let db = new alasql.Database('dummyDb');
-  const count = (table) => db.exec(`SELECT COUNT(*) FROM ${table}`)[0]['COUNT(*)'];
+  //let db = new alasql.Database('dummyDb');
+  const count = (table) => alasql(`SELECT COUNT(*) FROM ${table}`)[0]['COUNT(*)'];
   const random = (base) => Math.floor(Math.random() * base) + 1;
   const randomBtw = (max, min) => Math.floor(Math.random() * (+max - +min)) + +min;
 
   // Init tables
-  db.exec(statements.init_tables);
+  //db.exec(statements.init_tables);
+  alasql(statements.init_tables);
   // Methods to create dummies
   /*
   const random_mapping = (mapping_table) => {
@@ -35,7 +36,8 @@ export const Database = () => {
           let entries_resolved = entries.map(entry =>
             ((typeof entry == "function") ? entry() : entry));
           //console.log(table, entries_resolved);
-          db.exec(table, entries_resolved);
+          //db.exec(table, entries_resolved);
+          alasql(table,entries_resolved)
         }
       }
       catch (e) {
@@ -150,5 +152,5 @@ export const Database = () => {
     function () { return random(count("member")) }
   ], 20);
 
-  return db;
+  //return db;
 }
