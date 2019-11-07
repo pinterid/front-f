@@ -101,8 +101,6 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount = () => {
-    // Get oAuth token
-    this.getAccessTokenFromGitHub();
     // Get the parameters from sources
     this.getParams();
   }
@@ -255,6 +253,12 @@ class Dashboard extends React.Component {
 
   }
 
+  toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+  
   render() {
       
     // Debugging access point - get username from router
