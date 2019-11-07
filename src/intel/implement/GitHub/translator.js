@@ -3,6 +3,7 @@ var alasql = require('alasql');
 
 export const fillDB = (objUser) => {
   fillPlatform(objUser);
+  fillOrganization(objUser);
 }
 
 const fillPlatform = (objUser) => {
@@ -40,4 +41,44 @@ const fillPlatform = (objUser) => {
     statusMessage,
     statusEmojiHTML
   ]);
+}
+
+const fillOrganization = (objUser) => {
+  objUser.profile.organizations.edges.forEach(_org => {
+    const avatarUrl = _org.node.avatarUrl;
+    const name = _org.node.name;
+    const url = _org.node.url;
+    alasql(statements.create_organization,[
+      avatarUrl,
+      name,
+      url
+    ]);
+
+    const organization_id = alasql('SELECT id FROM organization').pop()['id'];
+    const platform_id = alasql('SELECT id FROM platform').pop()['id'];
+  
+    alasql(statements.map_platform_has_organization,[
+      platform_id,
+      organization_id
+    ]);
+    _org.node.membersWithRole.nodes.forEach(_member => {
+      const memberAvatarUrl = _member.avatarUrl;
+      const memberName = _member.name;
+      const memberWebUrl = _member.url;
+      const memberUsername = _member.login;
+      alasql(statements.create_member,[
+        memberAvatarUrl,
+        memberName,
+        memberUsername,
+        memberWebUrl
+      ])
+      const member_id = alasql('SELECT id FROM member').pop()['id'];
+
+      alasql(statements.map_organization_has_member,[
+        organization_id,
+        member_id
+      ])
+
+    });
+  })
 }
