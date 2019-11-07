@@ -5,5 +5,5 @@ import * as intel from './intel'
  * intel.testCall()
  */
 
-intel.fillDbFromUser("pinterid");
+intel.fillDbFromUser(["github", "github.com", "pinterid"]);
  

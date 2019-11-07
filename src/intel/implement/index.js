@@ -9,6 +9,6 @@ export const Database = () => {
   
 
 }
-export async function fill(name) {
-    await github.fill(name);
+export async function fill(user) {
+    await github.fill(user);
 }

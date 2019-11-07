@@ -3,7 +3,7 @@ import * as gqlData from "./gqlData";
 import * as translator from './translator';
 
 // Get profile and calendar
-export async function fill(username) {
+export async function fill(user) {
   const getPlatform = async (
     username
   ) => {
@@ -28,7 +28,7 @@ export async function fill(username) {
     translator.fillDB(objUser);
   };
 
-  await getPlatform(username);
+  await getPlatform(user[2]);
 }
 
 /** 
