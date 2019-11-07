@@ -4,7 +4,7 @@ import { IProvider } from 'react-very-simple-oauth'
 const client_id = process.env.REACT_APP_GITHUB_CLIENT_ID;
 const client_secret = process.env.REACT_APP_GITHUB_CLIENT_SECRET;
 const state = guid()
-const redirect_uri = encodeURIComponent(`http://localhost:3000/oauth/redirect`)
+const redirect_uri = encodeURIComponent(`https://snek.at/oauth`)
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/'
 
 export const githubProvider: IProvider<boolean> = {

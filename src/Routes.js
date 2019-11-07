@@ -17,7 +17,7 @@ class Routes extends React.Component {
       <Switch>
           <Route exact path='/settings' component={SettingsPage} />
           <Route exact path='/u' component={ProfilePage}/>
-          <Route exact path='/oauth/redirect' component={RedirectPage}></Route>
+          <Route exact path='/oauth' component={RedirectPage}></Route>
         <Route
           render={function () {
             return <h1>Not Found</h1>;
