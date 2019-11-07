@@ -4,7 +4,7 @@ import { HttpLink } from "apollo-link-http";
 import { InMemoryCache, IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 
 // Base url
-export const APIHost = "https://api.github.com";
+export const APIHost = "https://cors-anywhere.herokuapp.com/https://api.github.com";
 
 // Cache setup
 const fragmentMatcher = new IntrospectionFragmentMatcher({
