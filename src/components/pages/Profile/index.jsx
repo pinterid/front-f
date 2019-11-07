@@ -178,7 +178,7 @@ class Dashboard extends React.Component {
     if(!this.checkForAccessToken()){
       const request = await RSA.acquireTokenAsync(githubProvider);
       if (request){
-        console.log("Got Access_Token from GitHub!");
+        this.toggle();
       }
     }
   }
@@ -277,7 +277,7 @@ class Dashboard extends React.Component {
             </MDBModalBody>
             <MDBModalFooter>
               <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
-              <MDBBtn color="primary" onClick={this.getAccessTokenFromGitHub}>Open</MDBBtn>
+              <MDBBtn color="primary" onClick={this.getAccessTokenFromGitHub} >Open</MDBBtn>
             </MDBModalFooter>
           </MDBModal>
         </MDBContainer>
