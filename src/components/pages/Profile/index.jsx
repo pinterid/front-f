@@ -260,7 +260,22 @@ class Dashboard extends React.Component {
   }
   
   render() {
-      
+    if (this.checkForAccessToken()==false){
+      return (
+        <MDBContainer>
+          <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+            <MDBModalHeader toggle={this.toggle}>Verify with OAuth</MDBModalHeader>
+            <MDBModalBody>
+              Open OAuth in a new Site.
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
+              <MDBBtn color="primary" onClick={this.getAccessTokenFromGitHub}>Open</MDBBtn>
+            </MDBModalFooter>
+          </MDBModal>
+        </MDBContainer>
+      );
+    }
     // Debugging access point - get username from router
     //console.log("User via GET param: "+username);
 
