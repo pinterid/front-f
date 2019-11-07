@@ -19,6 +19,8 @@ import {
 //> Routes
 import Routes from './Routes';
 
+require('dotenv').config();
+
 class App extends React.Component {
   render() {
     return (

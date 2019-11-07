@@ -22,6 +22,11 @@ import {
   MDBAnimation,
   MDBAvatar,
   MDBCardUp,
+  MDBModal,
+  MDBBtn,
+  MDBModalBody,
+  MDBModalFooter,
+  MDBModalHeader,
 } from 'mdbreact';
 
 //> Images
@@ -101,6 +106,8 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount = () => {
+    // Open OAuth Modal
+    this.toggle();
     // Get the parameters from sources
     this.getParams();
   }
