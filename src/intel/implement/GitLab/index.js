@@ -1,3 +1,5 @@
+import * as statements from '../../sql/statements';
+
 // Import JSON structure
 import {
   structure,
@@ -9,6 +11,7 @@ import {
   yearEntry
 } from './Objects';
 let data = null;
+var alasql = require('alasql');
 
 //> Parser functions
 // Parse Json to DOM Object
@@ -66,7 +69,7 @@ var keyMatch = function(o, r) {
 // Fetch JSON from url
 const fetchJson = (urlIn) => {
   const proxy = "https://c-hive-proxy.herokuapp.com/";
-
+  //const proxy = "";
   const url = `${proxy}${urlIn}`;
   return fetch(url, {
     headers: {
@@ -82,7 +85,7 @@ const fetchJson = (urlIn) => {
 // Fetch HTML from url
 const fetchHtml = (urlIn) => {
   const proxy = "https://c-hive-proxy.herokuapp.com/";
-
+  //const proxy = "";
   const url = `${proxy}${urlIn}`;
   return fetch(url, {
     headers: {
@@ -110,7 +113,7 @@ const getMember = async (username) => {
     member.name = name;
     member.username = username;
     member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
-    member.webUrl = `https://${data.platformUrl}/${username}`;
+    member.url = `https://${data.platformUrl}/${username}`;
 
     return member;
   });
@@ -134,12 +137,12 @@ const getMembers = async (path) => {
 };
 
 // Get Json data file
-export const get = async (server, username) => {
-  data = JSON.parse(JSON.stringify(structure));
+export const fill = async (user) => {
+  data = JSON.parse(JSON.stringify(structure)); //JSON
   const fillStructure = async (base) => {
     // Fill profile of a user
     const fillProfile = async () => {
-      const url = `https://${base.platformUrl}/${username}`;
+      const url = `https://${user.server}/${user.username}`;
       parseTextToDOM(fetchHtml(url)).then((html) => {
         const status = html.getElementsByTagName("gl-emoji")[0];
         const coverDesc = html
@@ -150,28 +153,47 @@ export const get = async (server, username) => {
           .getElementsByClassName("avatar-holder")[0]
           .getElementsByTagName("a")[0]
           .getAttribute("href");
-        const links = html.getElementsByClassName("profile-link-holder");
+        const links = html.getElementsByClassName("profile-link-holder")[0];
         const message = null;
         const emojiHTML = null;
         const username = coverDesc[0].innerHTML.trim().substring(1);
         const date = coverDesc[1].innerHTML;
 
+        var dbAvatarURL = null;
         if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
-          base.avatarUrl = avatarUrl;
+          dbAvatarURL = avatarUrl;
         }else{
-          base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
+          dbAvatarURL = `https://${user.server}/${avatarUrl.substring(
           1
         )}`;
         }
 
-        base.username = username;
-        base.name = coverTitle.innerHTML.trim();
-        base.createdAt = new Date(date);
+        base.username = username; //JSON
+        base.name = coverTitle.innerHTML.trim(); //JSON
+        base.createdAt = new Date(date); //JSON
+
+        const createdAt = new Date(date);
+
+        console.log(status,links)
+      
+        alasql(statements.create_platform,[
+          user.platformName,
+          url,
+          dbAvatarURL,
+          "null",
+          "null",
+          "null",
+          username,
+          createdAt,
+          "null",
+          message,
+          emojiHTML,
+        ]);
       });
     };
     // Fill all Organizations a user is in into structure
     const fillOrganizations = async () => {
-      const url = `https://${base.platformUrl}/users/${username}/groups.json`;
+      const url = `https://${base.platformUrl}/users/${user.username}/groups.json`;
       let orgs = [];
       parseJsonToDOM(fetchJson(url)).then(async (html) => {
         const rows = html.getElementsByClassName("group-row");
@@ -228,7 +250,7 @@ export const get = async (server, username) => {
             .getElementsByClassName("event-scope")[0]
             .getElementsByTagName("a")[0]
             .getAttribute("href");
-          contrib.time = time.split("T")[1];
+          contrib.datetime = time;
           contrib.nameWithOwner = nameWithOwner.substring(1);
           contrib.repoUrl = `https://${base.platformUrl}/${contrib.nameWithOwner}`;
 
@@ -278,9 +300,9 @@ export const get = async (server, username) => {
       };
 
       const limit = "2147483647";
-      const url = `https://${base.platformUrl}/${username}?limit=${limit}`;
+      const url = `https://${base.platformUrl}/${user.username}?limit=${limit}`;
 
-      let _years = [];
+      let _years = {};
       const years = await parseJsonToDOM(fetchJson(url)).then(async (res) => {
         let commits = await getCommits(res);
         let issues = await getIssues(res);
@@ -293,7 +315,7 @@ export const get = async (server, username) => {
           currentYear++
         ) {
           let year = JSON.parse(JSON.stringify(yearEntry));
-          year.stats.streak.currentStreak = "2001-01-01";
+          //year.stats.streaks.currentStreak = "2001-01-01";
           var contributionsPerYear = (contributions) => {
             return keyMatch(contributions, new RegExp("^" + currentYear));
           };
@@ -308,8 +330,8 @@ export const get = async (server, username) => {
                 cEntry = year.calendar[key];
               }
 
-              cEntry.week = new Date(key).getWeekNumber();
-              cEntry.weekday = new Date(key).getDay();
+              cEntry.week = new Date(key).getWeekNumber().toString();
+              cEntry.weekday = new Date(key).getDay().toString();
 
               let repos = [];
               for (let [cKey, contribution] of Object.entries(
@@ -345,7 +367,7 @@ export const get = async (server, username) => {
           fill(contributionsPerYear(issues), "issues");
           fill(contributionsPerYear(pullRequests), "pullRequests");
 
-          _years.push(year);
+          _years[currentYear] = year;
         }
 
         return _years;
@@ -353,7 +375,7 @@ export const get = async (server, username) => {
 
       base.contributions.years = years;
     };
-    base.platformUrl = server;
+    base.platformUrl = user.server;
 
     await fillProfile();
     await fillOrganizations();
