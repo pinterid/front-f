@@ -1,5 +1,5 @@
 import * as statements from '../sql/statements';
-var alasql = require('alasql')
+var alasql = require('alasql');
 
 export const Database = () => {
 
