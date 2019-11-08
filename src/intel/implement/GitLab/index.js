@@ -139,12 +139,13 @@ const getMembers = async (path) => {
 // Get Json data file
 export const fill = async (user) => {
   data = JSON.parse(JSON.stringify(structure)); //JSON
-  const fillStructure = async (base) => {
+  const fillStructure =  (base) => {
     // Fill profile of a user
     const fillProfile = async () => {
+      console.log(1)
       const url = `https://${user.server}/${user.username}`;
-      parseTextToDOM(fetchHtml(url)).then((html) => {
-        const status = html.getElementsByTagName("gl-emoji")[0];
+      const html = await parseTextToDOM(fetchHtml(url).then((html) =>{return html}));
+      const status = html.getElementsByTagName("gl-emoji")[0];
         const coverDesc = html
           .getElementsByClassName("cover-desc")[0]
           .getElementsByTagName("span");
@@ -166,15 +167,12 @@ export const fill = async (user) => {
           dbAvatarURL = `https://${user.server}/${avatarUrl.substring(
           1
         )}`;
-        }
 
         base.username = username; //JSON
         base.name = coverTitle.innerHTML.trim(); //JSON
         base.createdAt = new Date(date); //JSON
 
         const createdAt = new Date(date);
-
-        console.log(status,links)
       
         alasql(statements.create_platform,[
           user.platformName,
@@ -189,17 +187,25 @@ export const fill = async (user) => {
           message,
           emojiHTML,
         ]);
-      });
+        console.log("platform")
+        console.log(alasql('SELECT * FROM platform'))
+        
+        
+      }
+      console.log("test")
     };
     // Fill all Organizations a user is in into structure
-    const fillOrganizations = async () => {
-      const url = `https://${base.platformUrl}/users/${user.username}/groups.json`;
-      let orgs = [];
-      parseJsonToDOM(fetchJson(url)).then(async (html) => {
+    const fillOrganizations =  () => {
+      console.log(2);
+      const url = `https://${user.server}/users/${user.username}/groups.json`;
+      let orgs = []; //JSON
+      var dbAvatarURL = null;
+      var count = 0;
+       parseJsonToDOM(fetchJson(url)).then( (html) => {
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)) {
-          let org = JSON.parse(JSON.stringify(organizations));
+          let org = JSON.parse(JSON.stringify(organizations)); //JSON
 
           const avatarUrl = _org
             .getElementsByClassName("avatar")[0]
@@ -208,21 +214,34 @@ export const fill = async (user) => {
             .getElementsByClassName("group-name")[0]
             .getAttribute("href");
 
+          
           if (avatarUrl) {
             if(avatarUrl.includes("https://") || avatarUrl.includes("http://")){
-              base.avatarUrl = avatarUrl;
+              dbAvatarURL = avatarUrl;
             }else{
-              base.avatarUrl = `https://${base.platformUrl}/${avatarUrl.substring(
+              dbAvatarURL = `https://${base.platformUrl}/${avatarUrl.substring(
                 1
               )}`;
             }
           }
-          org.name = `${name.substring(1)}`;
-          org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`;
-          orgs.push(org);
+          org.name = `${name.substring(1)}`; //JSON
+          org.orgUrl = `https://${base.platformUrl}/${name.substring(1)}`; //JSON
+          orgs.push(org); //JSON
+
+          name = `${name.substring(1)}`;
+          
+          alasql(statements.create_organization,[
+            dbAvatarURL,
+            name,
+            url
+          ]);
+          console.log("organization")
+          console.log(alasql('SELECT * FROM organization'))
         }
       });
       base.organizations = orgs;
+
+      
     };
     // Fill all contributions and repositories
     const fillContributions = async () => {
@@ -377,11 +396,12 @@ export const fill = async (user) => {
     };
     base.platformUrl = user.server;
 
-    await fillProfile();
-    await fillOrganizations();
-    await fillContributions();
+     fillProfile()
+     fillOrganizations()
+
+    // fillContributions();
 
     return base;
   };
-  return await fillStructure(data);
+  return  fillStructure(data);
 };

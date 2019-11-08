@@ -13,4 +13,5 @@ export const testCall = () => {
 
 export const fillDbFromUser = (user) => {
   imp.fill(user).then(()=> console.log(alasql('SELECT * FROM platform')))
+  //imp.fill(user).then(()=> console.log(alasql('SELECT * FROM organization')))
 }
