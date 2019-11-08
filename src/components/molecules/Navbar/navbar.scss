@@ -1,0 +1,29 @@
+.navbar{
+  // Brand image size
+  svg{
+      // Color of logo
+      &#logo{
+          height: 2.5rem;
+          width: 2.5rem;
+          .st0{
+              fill: #ffffff;
+          }
+          .st1{
+              fill: #F61A42;
+          }
+      } 
+  }
+  &.white{
+      svg{
+          // Color of logo
+          &#logo{
+              .st0{
+                  fill: #000000;
+              }
+              .st1{
+                  fill: #F61A42;
+              }
+          }
+      }
+  }
+}

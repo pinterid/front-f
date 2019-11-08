@@ -31,7 +31,6 @@ import {
 //> Images
 // Logo
 import { ReactComponent as Logo } from  '../../../assets/content/logo.svg';
-import { ProfilePage } from '../../pages';
 
 class Navbar extends React.Component{
     constructor(props){
@@ -50,6 +49,17 @@ class Navbar extends React.Component{
         window.scrollTo(0, 0);
         this.state.collapseID === collapseID && this.setState({ collapseID: "" });
     };
+
+    // Get navbar mode
+    _getMode = () => {
+        let opts = {};
+        if(this.props.mode){
+            opts['dark'] = 'dark';
+        } else {
+            opts['light'] = 'light';
+        }
+        return opts;
+    }
 
     toggleLogin = () => {
       this.setState({
@@ -178,6 +188,7 @@ class Navbar extends React.Component{
                   </MDBModal>
                 </MDBContainer>
                 <MDBNavbar
+                color={this.props.mode ? ("agency-dark") : ("white")} {...this._getMode()}
                 expand="md"
                 fixed="top"
                 scrolling
@@ -206,13 +217,14 @@ class Navbar extends React.Component{
                         </MDBFormInline>
                       </MDBNavItem>
                     </MDBNavbarNav>
+                    <MDBDropdownItem divider />
                     <MDBNavbarNav right>
                       <MDBNavItem>
                         <MDBDropdown>
                           <MDBDropdownToggle nav caret>
                             <MDBIcon icon="user" className="mr-1" />Profile
                           </MDBDropdownToggle>
-                          <MDBDropdownMenu className="dropdown-default" right>
+                          <MDBDropdownMenu className="dropdown-default" left basic>
                             <MDBDropdownItem onClick={alert}>My account</MDBDropdownItem>
                             <MDBDropdownItem onClick={this.toggleLogin}>Log in</MDBDropdownItem>
                           </MDBDropdownMenu>
