@@ -139,7 +139,7 @@ const getMembers = async (path) => {
 // Get Json data file
 export const fill = async (user) => {
   data = JSON.parse(JSON.stringify(structure)); //JSON
-  const fillStructure =  (base) => {
+  const fillStructure = async (base) => {
     // Fill profile of a user
     const fillProfile = async () => {
       console.log(1)
@@ -189,19 +189,17 @@ export const fill = async (user) => {
         ]);
         console.log("platform")
         console.log(alasql('SELECT * FROM platform'))
-        
-        
       }
       console.log("test")
     };
     // Fill all Organizations a user is in into structure
-    const fillOrganizations =  () => {
+    const fillOrganizations = async () => {
       console.log(2);
       const url = `https://${user.server}/users/${user.username}/groups.json`;
       let orgs = []; //JSON
       var dbAvatarURL = null;
       var count = 0;
-       parseJsonToDOM(fetchJson(url)).then( (html) => {
+      const html = await parseJsonToDOM(fetchJson(url)).then( (html) => {
         const rows = html.getElementsByClassName("group-row");
 
         for (const _org of Array.from(rows)) {
@@ -236,11 +234,24 @@ export const fill = async (user) => {
             url
           ]);
           console.log("organization")
-          console.log(alasql('SELECT * FROM organization'))
+
+          var id_platform = alasql('VALUE OF SELECT id FROM platform')
+          var id_organization = alasql('VALUE OF SELECT id FROM organization')
+
+          console.log(alasql('SELECT id FROM organization'))
+          console.log(id_organization)
+          console.log(id_platform)
+          
+          alasql(statements.map_platform_has_organization,[
+            id_platform,
+            id_organization
+          ]);
+          
         }
       });
       base.organizations = orgs;
-
+      console.log("test2")
+      console.log(alasql('SELECT * FROM platform_has_organization'))
       
     };
     // Fill all contributions and repositories
@@ -396,10 +407,14 @@ export const fill = async (user) => {
     };
     base.platformUrl = user.server;
 
-     fillProfile()
-     fillOrganizations()
+    fillProfile().then(async ()=> {
+       await fillOrganizations()
+      })
+     
 
     // fillContributions();
+
+
 
     return base;
   };
