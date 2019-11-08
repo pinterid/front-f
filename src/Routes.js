@@ -9,15 +9,17 @@ import {
   SettingsPage,
   ProfilePage,
   RedirectPage,
+  LandingPage,
 } from './components/pages';
 
 class Routes extends React.Component {
   render() {
     return (
       <Switch>
+          <Route exact path='/' component={LandingPage} />
           <Route exact path='/settings' component={SettingsPage} />
           <Route exact path='/u/:username' component={ProfilePage}/>
-          <Route exact path='/oauth/redirect' component={RedirectPage}></Route>
+          <Route exact path='/oauth/redirect' component={RedirectPage} />
         <Route
           render={function () {
             return <h1>Not Found</h1>;

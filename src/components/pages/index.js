@@ -3,9 +3,11 @@
 import SettingsPage from './Settings';
 import ProfilePage from './Profile';
 import RedirectPage from './OAuthRedirect';
+import LandingPage from './Landing';
 
 export {
     SettingsPage,
     ProfilePage,
     RedirectPage,
+    LandingPage,
 }
