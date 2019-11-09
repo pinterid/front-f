@@ -1,9 +1,29 @@
 import * as statements from '../../sql/statements';
 var alasql = require('alasql');
+let streak = false;
+let streakStart = "";
+let streakTotal = 0;
 
 export const fillDB = (objUser) => {
+  console.log(objUser)
   fillPlatform(objUser);
   fillOrganization(objUser);
+  fillStats(objUser);
+}
+
+const getBusiestDay = (year) => {
+  let busiestDay = null;
+  year.forEach((day) => {
+    if(busiestDay == null){
+      busiestDay = day;
+    }
+    else{
+      if(day.contributionCount > busiestDay.contributionCount){
+        busiestDay = day;
+      }
+    }
+  })
+  return busiestDay;
 }
 
 const fillPlatform = (objUser) => {
@@ -80,5 +100,72 @@ const fillOrganization = (objUser) => {
       ])
 
     });
+  })
+}
+
+const fillStats = (objUser) => {
+  let keys = Object.keys(objUser.calendar).filter((str) => { return str.match(/c[0-9]+/)})
+  let days = [];
+  let years = {};
+  keys.forEach((c) => {
+    const year = objUser.calendar[c]
+    for (const [w, week] of year.contributionCalendar.weeks.entries()) {
+      for (const [d, day] of week.contributionDays.entries()) {
+        days.push(day);
+      }
+    }
+  })
+  days.forEach((day) => {
+    const year = new Date(day.date).getFullYear();
+    if(years[year] == undefined){
+      years[year] = []
+    }
+    years[year].push(day);
+  })
+  Object.keys(years).forEach((y) => {
+    const year = years[y];
+    const busiestDay = getBusiestDay(year);
+    const busiestDayDate = busiestDay.date;
+    const busiestDayCount = busiestDay.contributionCount;
+
+    alasql(statements.create_busiestDay,[
+      busiestDayDate,
+      busiestDayCount
+    ])
+    const yearNum = new Date(busiestDayDate).getFullYear();
+    const busiestDayId = alasql('SELECT id FROM busiestDay').pop()['id'];
+    const platformId = alasql('SELECT id FROM platform').pop()['id'];
+    alasql(statements.create_statistic,[
+      yearNum,
+      busiestDayId,
+      platformId
+    ])
+    year.forEach((day) => {
+      const dayTotal = day.contributionCount;
+      const dayDate = day.date;
+
+      if (dayTotal !== 0) {
+        if(!streak){
+          streak = true;
+          streakStart = dayDate;
+          streakTotal = dayTotal;
+        }
+        else {
+          streakTotal += dayTotal;
+        }
+      } 
+      else if(streakTotal != 0) {
+        const statisticId = alasql('SELECT id FROM statistic').pop()['id'];
+        alasql(statements.create_streak,[
+          streakStart,
+          new Date(new Date(dayDate).getTime() - (24*60*60*1000)).toISOString().substr(0,10),
+          streakTotal,
+          statisticId
+        ])
+        streak = false;
+        streakStart = "";
+        streakTotal = 0;
+      }
+    })
   })
 }
