@@ -1,4 +1,4 @@
-import * as statements from '../../sql/statements';
+import * as insert from '../../Database/Statements/Insert';
 var alasql = require('alasql');
 let streak = false;
 let streakStart = "";
@@ -48,7 +48,7 @@ const fillPlatform = (objUser) => {
   const createdAt = objUser.profile.createdAt;
   const location = objUser.profile.location;
 
-  alasql(statements.create_platform,[
+  alasql(insert.platform,[
     "GitHub", 
     "https://github.com",
     avatarUrl,
@@ -68,7 +68,7 @@ const fillOrganization = (objUser) => {
     const avatarUrl = _org.node.avatarUrl;
     const name = _org.node.name;
     const url = _org.node.url;
-    alasql(statements.create_organization,[
+    alasql(insert.organization,[
       avatarUrl,
       name,
       url
@@ -77,7 +77,7 @@ const fillOrganization = (objUser) => {
     const organization_id = alasql('SELECT id FROM organization').pop()['id'];
     const platform_id = alasql('SELECT id FROM platform').pop()['id'];
   
-    alasql(statements.map_platform_has_organization,[
+    alasql(insert.platform_has_organization,[
       platform_id,
       organization_id
     ]);
@@ -86,7 +86,7 @@ const fillOrganization = (objUser) => {
       const memberName = _member.name;
       const memberWebUrl = _member.url;
       const memberUsername = _member.login;
-      alasql(statements.create_member,[
+      alasql(insert.member,[
         memberAvatarUrl,
         memberName,
         memberUsername,
@@ -94,7 +94,7 @@ const fillOrganization = (objUser) => {
       ])
       const member_id = alasql('SELECT id FROM member').pop()['id'];
 
-      alasql(statements.map_organization_has_member,[
+      alasql(insert.organization_has_member,[
         organization_id,
         member_id
       ])
@@ -128,14 +128,14 @@ const fillStats = (objUser) => {
     const busiestDayDate = busiestDay.date;
     const busiestDayCount = busiestDay.contributionCount;
 
-    alasql(statements.create_busiestDay,[
+    alasql(insert.busiestDay,[
       busiestDayDate,
       busiestDayCount
     ])
     const yearNum = new Date(busiestDayDate).getFullYear();
     const busiestDayId = alasql('SELECT id FROM busiestDay').pop()['id'];
     const platformId = alasql('SELECT id FROM platform').pop()['id'];
-    alasql(statements.create_statistic,[
+    alasql(insert.statistic,[
       yearNum,
       busiestDayId,
       platformId
@@ -156,7 +156,7 @@ const fillStats = (objUser) => {
       } 
       else if(streakTotal != 0) {
         const statisticId = alasql('SELECT id FROM statistic').pop()['id'];
-        alasql(statements.create_streak,[
+        alasql(insert.streak,[
           streakStart,
           new Date(new Date(dayDate).getTime() - (24*60*60*1000)).toISOString().substr(0,10),
           streakTotal,

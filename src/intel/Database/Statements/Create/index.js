@@ -223,3 +223,21 @@ export const platform_has_repository = `
             REFERENCES repository (id)    
     );
 `;
+
+export const init_tables = `
+    ${platform}
+    ${organization}
+    ${member}
+    ${languagePie}
+    ${repository}
+    ${languageSlice}
+    ${busiestDay}
+    ${statistic}
+    ${streak}
+    ${calendar}
+    ${contrib}
+    ${organization_has_member}
+    ${repository_has_member}
+    ${platform_has_organization}
+    ${platform_has_repository}
+`;

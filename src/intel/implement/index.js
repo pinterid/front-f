@@ -1,4 +1,4 @@
-import * as statements from '../sql/statements';
+import * as statements from '../Database/Statements/Create';
 import * as github from './GitHub'
 var alasql = require('alasql');
 
