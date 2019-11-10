@@ -9,6 +9,7 @@ export const fillDB = (objUser) => {
   fillPlatform(objUser);
   fillOrganization(objUser);
   fillStats(objUser);
+  fillRepos(objUser);
 }
 
 const getBusiestDay = (year) => {
@@ -168,4 +169,61 @@ const fillStats = (objUser) => {
       }
     })
   })
+}
+
+const fillRepos = (objUser) => {
+  let keys = Object.keys(objUser.calendar).filter((str) => { return str.match(/c[0-9]+/)})
+  keys.forEach((c) => {
+    const reposi = objUser.calendar[c].commitContributionsByRepository
+    reposi.forEach( (_repo) => {
+      if(alasql('SELECT url from repository WHERE url=?',[_repo.repository.url])[0] == null){
+        const languagesCount = _repo.repository.languages.totalCount;
+        const languagesSize = _repo.repository.languages.totalSize;
+        alasql(insert.languagePie,[
+          languagesSize,
+          languagesCount
+        ])
+        const pieId = alasql('SELECT id FROM languagePie').pop()['id'];
+
+        _repo.repository.languages.edges.forEach(_edge =>{
+          const nodeName = _edge.node.name;
+          const nodeSize = _edge.size;
+          const nodeColor = _edge.node.color;
+          alasql(insert.languageSlice,[
+            nodeName,
+            nodeColor,
+            nodeSize,
+            pieId
+          ]);
+        })
+        const repoOwnerUsername = _repo.repository.owner.login;
+        
+        const repoOwnerAvatarUrl = _repo.repository.owner.avatarUrl;
+        const repoOwnerName = _repo.repository.owner.name;
+        const repoOwnerUrl = _repo.repository.owner.url;
+        alasql(insert.member,[
+          repoOwnerAvatarUrl,
+          repoOwnerName,
+          repoOwnerUsername,
+          repoOwnerUrl
+        ])
+        const repoOwnerId = alasql('SELECT id FROM member').pop()['id'];
+        const name = _repo.repository.name
+        const repoUrl = _repo.repository.url
+        alasql(insert.repository,[
+          repoUrl,
+          name,
+          repoOwnerId,
+          pieId
+        ])
+        const repoId = alasql('SELECT id FROM repository').pop()['id'];
+        const platformId = alasql('SELECT id FROM platform').pop()['id'];
+        alasql(insert.platform_has_repository,[
+          platformId,
+          repoId
+        ])
+      }
+    })
+  })
+  console.log(alasql('select * from repository'))
 }
