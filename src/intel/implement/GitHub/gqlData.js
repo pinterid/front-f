@@ -78,15 +78,15 @@ const getCalendarQueryPart = (year,c) => {
         repository {
           defaultBranchRef{
             target{
-              ... on Commit{
-                changedFiles
-                additions
-                deletions
-                committedDate
-                history{
-                  edges{
-                    node{
+              ... on Commit {
+                history {
+                  edges {
+                    node {
+                      changedFiles
+                      additions
+                      deletions
                       committedDate
+                      commitUrl
                     }
                   }
                 }
