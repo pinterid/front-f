@@ -67,11 +67,11 @@ const fillOrganization = (objUser) => {
       platform_id,
       organization_id
     ]);
-    fillOrgMembers(_org.node.membersWithRole.nodes);
+    fillOrgMembers(_org.node.membersWithRole.nodes, organization_id);
   })
 }
 
-const fillOrgMembers = (nodes) => {
+const fillOrgMembers = (nodes, orgId) => {
   nodes.forEach(_member => {
     const memberAvatarUrl = _member.avatarUrl;
     const memberName = _member.name;
@@ -86,16 +86,15 @@ const fillOrgMembers = (nodes) => {
     const member_id = alasql('SELECT id FROM member').pop()['id'];
 
     alasql(insert.organization_has_member,[
-      organization_id,
+      orgId,
       member_id
     ])
-
   });
 }
 
 const fillStats = (objUser) => {
   let keys = Object.keys(objUser.calendar).filter((str) => { return str.match(/c[0-9]+/)})
-  const days = getDaysArray(keys);
+  const days = getDaysArray(objUser, keys);
   const years = getYearsDict(days);
   fillBusiestDay(years);
 }
@@ -111,11 +110,11 @@ const fillBusiestDay = (years) => {
       busiestDayDate,
       busiestDayCount
     ])
-    fillStatistic(year);
+    fillStatistic(year, busiestDayDate);
   })
 }
 
-const fillStatistic = (year) => {
+const fillStatistic = (year, busiestDayDate) => {
   const yearNum = new Date(busiestDayDate).getFullYear();
   const busiestDayId = alasql('SELECT id FROM busiestDay').pop()['id'];
   const platformId = alasql('SELECT id FROM platform').pop()['id'];
@@ -175,8 +174,6 @@ const fillPie = (reposi) => {
         languagesCount
       ])
       fillLanguageSlice(_repo);
-      fillRepoOwner(_repo);
-      fillRepository(_repo)
     }
   })
 }
@@ -194,6 +191,7 @@ const fillLanguageSlice = (_repo) => {
       pieId
     ]);
   })
+  fillRepoOwner(_repo);
 }
 
 const fillRepoOwner = (_repo) => {
@@ -207,12 +205,14 @@ const fillRepoOwner = (_repo) => {
     repoOwnerUsername,
     repoOwnerUrl
   ])
+  fillRepository(_repo);
 }
 
 const fillRepository = (_repo) => {
   const repoOwnerId = alasql('SELECT id FROM member').pop()['id'];
   const name = _repo.repository.name
   const repoUrl = _repo.repository.url
+  const pieId = alasql('SELECT id FROM languagePie').pop()['id'];
   alasql(insert.repository,[
     repoUrl,
     name,
@@ -311,7 +311,7 @@ const getBusiestDay = (year) => {
   return busiestDay;
 }
 
-const getDaysArray = (keys) => {
+const getDaysArray = (objUser, keys) => {
   let days = [];
   keys.forEach((c) => {
     const year = objUser.calendar[c];

@@ -8,6 +8,6 @@ Database();
 export const fillDbFromUser = (username) => {
   //console.log(db.exec('SELECT * FROM organization_has_member'))
   fill(username).then(() => {
-    console.log(alasql('SELECT * FROM platform'));
+    console.log(alasql('SELECT * FROM platform_has_repository'));
   })
 }
