@@ -110,16 +110,29 @@ const getMember = async (username) => {
       .getAttribute("href");
     const name = html.getElementsByClassName("cover-title")[0].innerHTML;
 
-    member.name = name;
-    member.username = username;
-    member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
-    member.url = `https://${data.platformUrl}/${username}`;
+    member.name = name; //JSON
+    member.username = username; //JSON
+    member.avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`; //JSON
+    member.url = `https://${data.platformUrl}/${username}`; //JSON
+
+    avatarUrl = `https://${data.platformUrl}/${avatarUrl.substring(1)}`;
+    url = `https://${data.platformUrl}/${username}`;
+
+    alasql(statements.create_member,[
+      avatarUrl,
+      name,
+      username,
+      url
+    ]);
+
+    console.log(alasql('SELECT * FROM member'));
 
     return member;
   });
 };
 // Get a list of members of a gitlab memberlist
 const getMembers = async (path) => {
+  console.log(structure.platformUrl)
   const url = `https://${data.platformUrl}/${path}`;
   let users = [];
   return parseTextToDOM(fetchHtml(url)).then(async (html) => {
@@ -349,6 +362,9 @@ export const fill = async (user) => {
           var contributionsPerYear = (contributions) => {
             return keyMatch(contributions, new RegExp("^" + currentYear));
           };
+          var week;
+          var weekday;
+          var dbtotal;
           let fill = (contributionsPerYear, type) => {
             for (let [key, contributionGroup] of Object.entries(
               contributionsPerYear
@@ -360,15 +376,19 @@ export const fill = async (user) => {
                 cEntry = year.calendar[key];
               }
 
-              cEntry.week = new Date(key).getWeekNumber().toString();
-              cEntry.weekday = new Date(key).getDay().toString();
+              cEntry.week = new Date(key).getWeekNumber().toString(); //JSON
+              cEntry.weekday = new Date(key).getDay().toString(); //JSON
 
               let repos = [];
               for (let [cKey, contribution] of Object.entries(
                 contributionGroup
               )) {
                 cEntry.contributions[`${type}`].push(contribution);
-                cEntry.total++;
+                cEntry.total++; //JSON
+
+                
+                dbtotal++;
+
                 repos.push(contribution.repoUrl);
 
                 year.stats[`${type}`].total++;
@@ -386,6 +406,9 @@ export const fill = async (user) => {
                 year.stats.busiestDay.count = year.calendar[key].total;
                 year.stats.busiestDay.date = key;
               }
+
+              week = new Date(key).getWeekNumber().toString();
+              weekday = new Date(key).getDay().toString();
             }
             // Calculate average per year
             year.stats.average /= 365;
@@ -398,6 +421,20 @@ export const fill = async (user) => {
           fill(contributionsPerYear(pullRequests), "pullRequests");
 
           _years[currentYear] = year;
+
+          
+          
+          var id_platform = alasql('VALUE OF SELECT id FROM platform')
+        
+          alasql(statements.create_calendar,[
+            date,
+            week,
+            weekday,
+            dbtotal,
+            "2020.12.1",
+            id_platform           
+          ]);
+          
         }
 
         return _years;
@@ -410,13 +447,9 @@ export const fill = async (user) => {
     fillProfile().then(async ()=> {
        await fillOrganizations()
       })
-     
-
-    // fillContributions();
-
-
+    fillContributions();
 
     return base;
   };
-  return  fillStructure(data);
+  return fillStructure(data);
 };

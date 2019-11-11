@@ -166,7 +166,7 @@ const init_contrib = `
     deletions INT NULL,
     changedFiles INT NULL,
     type VARCHAR(255) NOT NULL,
-    languageSlice_id INT NOT NULL,
+    languageSlice_id INT NULL,
     calendar_id INT NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_contrib_languageSlice1
